@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    Objective-C 中的块对象｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/2018/02/11/block-in-oc/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../../../../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../../../../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="true" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <!--only post-->
+
+
+  <img class="wechat-title-img" src="/images/title_img/keyboards.jpg">
+
+
+  <style>
+    header.intro-header {
+    background-image: url('/images/title_img/keyboards.jpg?imageView2/1/w/1400/h/400/interlace/1/q/90')
+  }
+</style>
+
+  <header class="intro-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <div class="post-heading">
+            <h1>Objective-C 中的块对象</h1>
+
+            <h2 class="subheading">Block 的使用方法与特性分析</h2>
+
+            <span class="meta">
+              作者 Hayden Wang
+              <span>
+                日期 2018-02-11
+              </span>
+            </span>
+            <div class="tags text-center">
+
+              <a class="tag" href="/tags/#Objective-C" title="Objective-C">Objective-C</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-title-haojen">
+      <span>
+        Objective-C 中的块对象
+      </span>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <!-- Post Container -->
+        <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+          <p><strong>Block是带有自动变量的匿名函数。</strong></p>
+          <p>完整形式的Block语法与一般的C语言函数定义相比，仅有两点不同：</p>
+          <ol>
+            <li>没有函数名；</li>
+            <li>带有<code>^</code>。</li>
+          </ol>
+          <h2 id="一、Block的定义"><a href="#一、Block的定义" class="headerlink" title="一、Block的定义"></a>一、Block的定义</h2>
+          <figure class="highlight plain">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">^ [返回值类型] [(参数列表)] &#123;表达式&#125;</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="1-完整写法"><a href="#1-完整写法" class="headerlink" title="1. 完整写法"></a>1. 完整写法</h3>
+          <figure class="highlight objectivec">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">^ <span class="keyword">int</span> (<span class="keyword">int</span> count) &#123; <span class="keyword">return</span> count+<span class="number">1</span>; &#125;</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="2-省略返回值类型"><a href="#2-省略返回值类型" class="headerlink" title="2. 省略返回值类型"></a>2. 省略返回值类型</h3>
+          <p>省略返回值类型时，如果表达式中有<code>return</code>语句就使用该返回值类型，如果表达式中没有<code>return</code>语句就使用<code>void</code>类型，表达式中含有多个<code>return</code>语句时，所有<code>return</code>的返回值类型必须相同。</p>
+          <figure class="highlight objectivec">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">^ (<span class="keyword">int</span> count) &#123; <span class="keyword">return</span> count+<span class="number">1</span>; &#125;</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="3-省略返回值类型和参数列表"><a href="#3-省略返回值类型和参数列表" class="headerlink" title="3. 省略返回值类型和参数列表"></a>3. 省略返回值类型和参数列表</h3>
+          <figure class="highlight objectivec">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">^ &#123; printf(<span class="string">"Block"</span>); &#125;</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h2 id="二、Block的类型声明"><a href="#二、Block的类型声明" class="headerlink" title="二、Block的类型声明"></a>二、Block的类型声明</h2>
+          <figure class="highlight objectivec">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">返回值类型 (^变量名) (参数类型)</span><br><span class="line"></span><br><span class="line"><span class="comment">// example:</span></span><br><span class="line"><span class="keyword">void</span> (^devowelizer) (<span class="keyword">id</span>, <span class="built_in">NSInteger</span>, <span class="built_in">BOOL</span>);</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="1-将Block赋值为Block类型变量：声明一个名为blk的变量。"><a href="#1-将Block赋值为Block类型变量：声明一个名为blk的变量。" class="headerlink" title="1. 将Block赋值为Block类型变量：声明一个名为blk的变量。"></a>1. 将Block赋值为Block类型变量：声明一个名为<code>blk</code>的变量。</h3>
+          <figure class="highlight objectivec">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="keyword">int</span> (^blk) (<span class="keyword">int</span>) = ^(<span class="keyword">int</span> count) &#123; <span class="keyword">return</span> count+<span class="number">1</span>; &#125;;</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="2-使用typedef来声明Block变量"><a href="#2-使用typedef来声明Block变量" class="headerlink" title="2. 使用typedef来声明Block变量"></a>2. 使用<code>typedef</code>来声明Block变量</h3>
+          <p>通过<code>typedef</code>关键字，可以将某个Block对象定义为一个新类型，以方便使用。应该在头文件或者实现文件顶部定义<code>typedef</code>。</p>
+          <figure class="highlight objectivec">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> (^blk_t) (<span class="keyword">int</span>);</span><br><span class="line">blk_t blk = ^(<span class="keyword">int</span> count) &#123; <span class="keyword">return</span> count+<span class="number">1</span>; &#125;;</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>向函数传递Block类型参数：<br>
+            <figure class="highlight objectivec">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line"><span class="comment">// 常规方法</span></span><br><span class="line"><span class="keyword">void</span> func(<span class="keyword">int</span> (^blk) (<span class="keyword">int</span>)) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// typedef方法</span></span><br><span class="line"><span class="keyword">void</span> func(blk_t blk) &#123;</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <p>函数有Block类型返回值：<br>
+            <figure class="highlight objectivec">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line"><span class="comment">// 常规方法</span></span><br><span class="line"><span class="keyword">int</span> (^func()) (<span class="keyword">int</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> ^(<span class="keyword">int</span> count) &#123; <span class="keyword">return</span> count+<span class="number">1</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// typedef方法</span></span><br><span class="line">blk_t func() &#123;</span><br><span class="line">    <span class="keyword">return</span> ^(<span class="keyword">int</span> count) &#123; <span class="keyword">return</span> count+<span class="number">1</span>; &#125;</span><br><span class="line">&#125;</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <h2 id="三、Block捕获机制"><a href="#三、Block捕获机制" class="headerlink" title="三、Block捕获机制"></a>三、Block捕获机制</h2>
+          <p>Block对象通常会使用外部创建的其他变量（基本类型变量，或者是指向其他对象的指针）。这些外部创建的变量叫做外部变量(external variables)。当执行Block对象时，为了确保其下的外部变量能够始终存在，相应的Block对象会捕获(captured)这些变量。</p>
+          <ul>
+            <li>对于基本类型的变量，捕获意味着程序会<strong>拷贝变量的值</strong>，并用Block对象内的局部变量保存。</li>
+            <li>对指针类型变量，Block对象会使用<strong>强引用</strong>，这意味着凡是Block对象用到的对象都会被保留。所以在相应的Block对象被释放前，这些对象一定不会被释放。（这也是Block对象和函数之间的差别，函数无法做到这点）。</li>
+          </ul>
+          <p><strong>“带有自动变量值”在Block中表现为“截获自动变量值”。</strong></p>
+          <ul>
+            <li>Block中，Block表达式截获所使用的自动变量值，即保存该自动变量的瞬间值。</li>
+            <li>在Block中给自动变量赋值，会产生编译错误。若想在Block内给外部变量赋值，需要加上<code>__block</code>说明符。</li>
+            <li>截获<code>Objective-C</code>对象时，在Block内向对象发送消息，不会产生编译错误。</li>
+          </ul>
+          <h3 id="避免self强引用"><a href="#避免self强引用" class="headerlink" title="避免self强引用"></a>避免self强引用</h3>
+          <p>如果要在一个Block中使用self，需要做几步工作来避免强引用循环。</p>
+          <ol>
+            <li>在Block外部声明self的弱引用（解除引用循环）</li>
+            <li>在Block内部对外部得弱引用进行强引用（内部变量会在Block结束时销毁，强引用消失）<figure class="highlight objectivec">
+                <table>
+                  <tr>
+                    <td class="code">
+                      <pre><span class="line">__<span class="keyword">weak</span> <span class="built_in">NSObject</span> *weakSelf = <span class="keyword">self</span>;</span><br><span class="line">myBlock = ^&#123;</span><br><span class="line">    <span class="built_in">NSObject</span> *strongSelf = weakSelf;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"self: %@"</span>, strongSelf);</span><br><span class="line">&#125;</span><br></pre>
+                    </td>
+                  </tr>
+                </table>
+              </figure>
+            </li>
+          </ol>
+          <p><strong>Block对象中无意使用self的情况</strong></p>
+          <p>在Block对象中使用实例变量，那么Block会捕获self而不是实例变量。因为<code>_var</code>在编译器被解读为<code>self-&gt;_var</code>。因此要用内部的强引用调用实例变量的存取方法。<br>
+            <figure class="highlight objectivec">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">__<span class="keyword">weak</span> <span class="built_in">NSObject</span> *weakSelf = <span class="keyword">self</span>;</span><br><span class="line">myBlock = ^&#123;</span><br><span class="line">    <span class="built_in">NSObject</span> *strongSelf = weakSelf;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"self: %@"</span>, strongSelf);</span><br><span class="line">    <span class="comment">// NSLog(@"%@", _var);</span></span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"%@"</span>, strongSelf.var);</span><br><span class="line">&#125;</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <h2 id="四、Block对象的返回值"><a href="#四、Block对象的返回值" class="headerlink" title="四、Block对象的返回值"></a>四、Block对象的返回值</h2>
+          <p>对于有返回值的Block对象，可以像调用函数那样调用Block对象，然后使用其返回值。</p>
+          <hr>
+          <blockquote>
+            <p>通过Block，可以将回调得设置代码和回调方法写在一段代码中。而Delegation和Notification机制里两者相隔很远。</p>
+          </blockquote>
+          <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2>
+          <blockquote>
+            <ul>
+              <li>[1]《Objective-C高级编程》</li>
+              <li>[2]《Objective-C编程》</li>
+            </ul>
+          </blockquote>
+          <hr>
+
+
+          <ul class="pager">
+
+            <li class="previous">
+              <a href="/2018/02/11/ice-overview/" data-toggle="tooltip" data-placement="top" title="交互式连接建立（ICE）">&larr; Previous Post</a>
+            </li>
+
+
+            <li class="next">
+              <a href="/2018/02/09/Shadowsocks-overview/" data-toggle="tooltip" data-placement="top" title="越过长城，走向世界">Next Post &rarr;</a>
+            </li>
+
+          </ul>
+
+
+
+
+
+
+          <!--加入新的评论系统-->
+
+        </div>
+
+        <div class="hidden-xs col-sm-3 toc-col">
+          <div class="toc-wrap">
+            <ol class="toc">
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#一、Block的定义"><span class="toc-text">一、Block的定义</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#1-完整写法"><span class="toc-text">1. 完整写法</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-省略返回值类型"><span class="toc-text">2. 省略返回值类型</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-省略返回值类型和参数列表"><span class="toc-text">3. 省略返回值类型和参数列表</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#二、Block的类型声明"><span class="toc-text">二、Block的类型声明</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#1-将Block赋值为Block类型变量：声明一个名为blk的变量。"><span class="toc-text">1. 将Block赋值为Block类型变量：声明一个名为blk的变量。</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-使用typedef来声明Block变量"><span class="toc-text">2. 使用typedef来声明Block变量</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#三、Block捕获机制"><span class="toc-text">三、Block捕获机制</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#避免self强引用"><span class="toc-text">避免self强引用</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#四、Block对象的返回值"><span class="toc-text">四、Block对象的返回值</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Sidebar Container -->
+
+        <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+          <!-- Featured Tags -->
+
+          <section>
+            <!-- no hr -->
+            <h5 class="text-center">
+              <a href="/tags/">FEATURED TAGS</a>
+            </h5>
+            <div class="tags">
+
+              <a class="tag" href="/tags/#Objective-C" title="Objective-C">Objective-C</a>
+
+            </div>
+          </section>
+
+
+          <!-- Friends Blog -->
+
+        </div>
+      </div>
+
+    </div>
+  </article>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../../../../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../../../../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../../../../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

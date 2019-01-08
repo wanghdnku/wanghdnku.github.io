@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    HTTP 协议概述｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/2018/02/21/http-overview/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../../../../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../../../../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="true" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <!--only post-->
+
+
+  <img class="wechat-title-img" src="/images/title_img/http.jpg">
+
+
+  <style>
+    header.intro-header {
+    background-image: url('/images/title_img/http.jpg?imageView2/1/w/1400/h/400/interlace/1/q/90')
+  }
+</style>
+
+  <header class="intro-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <div class="post-heading">
+            <h1>HTTP 协议概述</h1>
+
+            <h2 class="subheading">超文本传输协议</h2>
+
+            <span class="meta">
+              作者 Hayden Wang
+              <span>
+                日期 2018-02-21
+              </span>
+            </span>
+            <div class="tags text-center">
+
+              <a class="tag" href="/tags/#Networks" title="Networks">Networks</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-title-haojen">
+      <span>
+        HTTP 协议概述
+      </span>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <!-- Post Container -->
+        <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+          <p>HTTP协议是用于客户端与服务器之间的通信，当使用HTTP协议时，一端担任客户端的角色，另一端担任服务器的角色。</p>
+          <h2 id="1-Client-Server-模式"><a href="#1-Client-Server-模式" class="headerlink" title="1. Client-Server 模式"></a>1. Client-Server 模式</h2>
+          <p>客户端与服务器之间通过请求与响应的交换来达成通信：</p>
+          <p>请求报文由：<strong>请求方法、请求URI、协议版本、（可选）请求首部字段、内容实体</strong> 构成。<br><img src="/images/http/http_request.png" alt="HTTP请求报文结构"></p>
+          <p>响应报文由：<strong>协议版本、状态码、状态码原因短语、（可选）相应首部字段、实体主体</strong> 构成。<br><img src="/images/http/http_reply.png" alt="HTTP响应报文结构"></p>
+          <hr>
+          <p><br></p>
+          <h2 id="2-持久连接和状态管理"><a href="#2-持久连接和状态管理" class="headerlink" title="2. 持久连接和状态管理"></a>2. 持久连接和状态管理</h2>
+          <p><strong>HTTP是一种无状态协议</strong>，协议自身不对请求和相应之间的通信状态进行保存。协议对发送过的请求或者相应内容不做持久化处理。<br>原因：为了更快地处理大量事物，确保协议的可伸缩性。<br>HTTP/1.1虽然是无状态的协议，但是为了实现期望的保持状态的功能，引入了Cookie技术。</p>
+          <h3 id="2-1-持久链接"><a href="#2-1-持久链接" class="headerlink" title="2.1 持久链接"></a>2.1 持久链接</h3>
+          <p>HTTP协议的初始版本，每次进行一次HTTP通信就要断开一次TCP连接</p>
+          <p><strong>持久连接</strong>：<br>持久连接特点是，只要任意一端没有明确提出断开连接，则保持TCP连接状态。<br>持久连接的好处在与减少了TCP重复建立和断开造成的额外开销，减轻了服务器的负载。</p>
+          <p><strong>管线化</strong>：<br>持久连接使得多数请求以管线化(pipelining)方式发送成为可能。这样就能同时并行发送多个请求，而不需要一个一个地等待响应了。</p>
+          <p><img src="/images/http/http_conn.png" alt="HTTP持久连接"></p>
+          <h3 id="2-2-使用Cookie的状态管理"><a href="#2-2-使用Cookie的状态管理" class="headerlink" title="2.2 使用Cookie的状态管理"></a>2.2 使用Cookie的状态管理</h3>
+          <p>Cookie 会根据从服务器端发送的响应报文内的一个叫做Set-Cookie的首部子短信息，通知客户端保存Cookie。当下次客户端再往服务器发送请求时，客户端会自动在请求报文中加入Cookie值后发送出去。<br>服务器端发现客户端发送过来的Cookie后，会去检查究竟是哪一个客户端发来的连接请求，然后对比服务器上的记录，最后得到之前的状态信息。</p>
+          <p><img src="/images/http/http_cookie.png" alt="HTTP Cookie"></p>
+          <hr>
+          <p><br></p>
+          <h2 id="3-HTTP-报文结构"><a href="#3-HTTP-报文结构" class="headerlink" title="3. HTTP 报文结构"></a>3. HTTP 报文结构</h2>
+          <p>HTTP报文本身是由多行数据（用CR+LF做换行符）构成的字符串文本。</p>
+          <p><img src="/images/http/http_message.png" alt="HTTP报文结构"></p>
+          <p>首部内容为客户端和服务器分别处理请求和响应提供所需要的信息。</p>
+          <p>报文首部的构成：</p>
+          <ul>
+            <li>请求行：包含用于请求的方法，请求URI和HTTP版本。</li>
+            <li>状态行：包含表明响应结果的状态码，原因短语和HTTP版本。</li>
+            <li>首部字段：包含表示请求和响应的各种条件和属性的各类首部。分为：请求首部、响应首部、通用首部、实体首部。</li>
+            <li>其他：包含RFC未定义的首部，如Cookie。</li>
+          </ul>
+          <p><img src="/images/http/http_message_example.png" alt="HTTP报文实例"></p>
+          <hr>
+          <p><br></p>
+          <h2 id="4-HTTP-首部字段"><a href="#4-HTTP-首部字段" class="headerlink" title="4. HTTP 首部字段"></a>4. HTTP 首部字段</h2>
+          <p>使用首部字段是为了给浏览器和服务器提供报文主体大小、所使用的语言、认证信息等内容。<br>HTTP首部字段由首部字段名和字段值构成，中间用冒号分隔。</p>
+          <h3 id="通用首部字段-General-Header-Fields"><a href="#通用首部字段-General-Header-Fields" class="headerlink" title="通用首部字段 General Header Fields"></a>通用首部字段 General Header Fields</h3>
+          <p>请求报文和响应报文都会使用的首部。</p>
+          <ul>
+            <li>Cache-Control：控制缓存行为</li>
+            <li>Connection：逐跳首部、连接的管理</li>
+            <li>Date：创建报文的日期时间</li>
+          </ul>
+          <h3 id="请求首部字段-Request-Header-Fields"><a href="#请求首部字段-Request-Header-Fields" class="headerlink" title="请求首部字段 Request Header Fields"></a>请求首部字段 Request Header Fields</h3>
+          <p>从客户端向服务器发送请求报文时使用的首部。补充了请求的附加内容、客户端信息、响应内容相关优先级等信息。</p>
+          <ul>
+            <li>Accept：用户代理可处理的媒体类型</li>
+            <li>Authorization：Web认证信息</li>
+            <li>Max-Forwards：最大传输逐跳数</li>
+            <li>User-Agent：HTTP客户端程序的信息</li>
+          </ul>
+          <h3 id="响应首部字段-Response-Header-Fields"><a href="#响应首部字段-Response-Header-Fields" class="headerlink" title="响应首部字段 Response Header Fields"></a>响应首部字段 Response Header Fields</h3>
+          <p>从服务器像客户端返回响应报文时使用的首部。补充了响应的附加内容、也会要求客户端附加额外的内容信息。</p>
+          <ul>
+            <li>Retry-After：对再次发起请求的时机要求</li>
+            <li>WWW-Authenticate：服务器对客户端的认证信息</li>
+          </ul>
+          <h3 id="实体首部字段-Entity-Header-Fields"><a href="#实体首部字段-Entity-Header-Fields" class="headerlink" title="实体首部字段 Entity Header Fields"></a>实体首部字段 Entity Header Fields</h3>
+          <p>针对请求报文和响应报文的实体部分使用的首部。补充了资源内容更新时间等与实体相关的信息。</p>
+          <ul>
+            <li>Allow：资源可支持的HTTP方法</li>
+            <li>Content-Encoding：实体主体适用的编码方式</li>
+            <li>Content-Language：实体主体的自然语言</li>
+            <li>Expires：实体主体过期的日期时间</li>
+            <li>Last-Modified：资源最后修改的日期时间</li>
+          </ul>
+          <hr>
+          <p><br></p>
+          <h2 id="5-HTTP-请求方法"><a href="#5-HTTP-请求方法" class="headerlink" title="5. HTTP 请求方法"></a>5. HTTP 请求方法</h2>
+          <p><strong>GET：获取资源</strong><br>GET方法用来请求访问已被URI识别的资源，指定的资源经服务器端解析后返回相应内容。</p>
+          <p><strong>POST：传输实体主体</strong><br>POST方法用来传输实体的主体，虽说功能与GET相似，但是POST的主要目标并不是获取相应的实体内容。</p>
+          <p><strong>PUT：传输文件</strong><br>PUT方法用来传输文件，就像FTP协议的文件上传一样，要求在请求报文的主体中包含文件内容，然后保存到请求URI制定的位置。</p>
+          <p><strong>HEAD：获取资源头部</strong><br>HEAD方法和GET方法一样，只是不返回报文主体部分。用于确认URI的有效性以及资源更新的日期时间等。</p>
+          <p><strong>DELETE：删除文件</strong><br>DELETE方法用来删除文件，是与PUT方法相反的方法。DELETE方法按请求URI删除指定的资源。</p>
+          <p><strong>OPTIONS：询问支持的方法</strong><br>查询针对请求URI指定的资源支持的方法。</p>
+          <p><strong>TRACE：追踪路径</strong><br>让Web服务器将之前的请求通信环回给客户端。</p>
+          <p><strong>CONNECT：要求用隧道协议连接代理</strong><br>CONNECT方法要求在与代理服务器通信时建立隧道，实现用隧道协议进行的TCP通信，主要使用SSL和TLS协议把通信内容加密后经网络隧道传输。</p>
+          <hr>
+          <p><br></p>
+          <h2 id="6-HTTP-响应状态码"><a href="#6-HTTP-响应状态码" class="headerlink" title="6. HTTP 响应状态码"></a>6. HTTP 响应状态码</h2>
+          <p><img src="/images/http/http_code.png" alt="HTTP状态码"></p>
+          <ul>
+            <li>200 OK：表示客户端发来的请求在服务器被正常处理了。</li>
+            <li>204 No Content：请求成功受理，但是返回的响应报文不包含实体部分。</li>
+            <li>206 Partial Content：客户端进行了范围请求，而服务器成功执行。</li>
+            <li>301 Moved Permanently：请求的资源已被分配新的URI，以后使用新URI</li>
+            <li>302 Found：临时重定向。本次使用新的URI。</li>
+            <li>303 See Other：所请求的资源对应着另外一个URI。</li>
+            <li>304 Not Modified：服务器资源未改变，客户端可以使用未过期缓存。不包含主体部分。</li>
+            <li>400 Bad Request：请求报文中存在语法错误。</li>
+            <li>403 Forbidden：对请求资源的访问被服务器拒绝了。</li>
+            <li>404 Not Found：未找到请求资源，或者服务器拒接原因不可描述。</li>
+            <li>500 Internal Server Error：服务器执行请求时发生错误。</li>
+            <li>503 Service Unavailable：服务器超负荷或者停机维护，无法处理请求。</li>
+          </ul>
+          <hr>
+          <p><br></p>
+          <h2 id="7-HTTPS"><a href="#7-HTTPS" class="headerlink" title="7. HTTPS"></a>7. HTTPS</h2>
+          <p>HTTP的缺点：</p>
+          <ol>
+            <li>使用明文通信，内容可能被<strong>窃听</strong></li>
+            <li>不验证通信方的身份，可能遭遇<strong>伪装</strong></li>
+            <li>无法证明报文的完整性，信息可能遭<strong>篡改</strong></li>
+          </ol>
+          <p><strong>HTTP + 加密 + 认证 + 完整性保护 = HTTPS</strong></p>
+          <p><img src="/images/http/http_crypt.jpg" alt="密码学工具箱"></p>
+          <p>HTTPS并非是应用层的一种新协议，只是HTTP通信接口部分用SSL(Secure Socket Layer)和TLS(Transport Layer Security)协议代替而已。<br>通常HTTP直接和TCP通信，当使用SSL时，泽阳编程先和SSL通信，再由SSL和TCP通信。</p>
+          <p><img src="/images/http/https.png" alt="HTTPS流程"></p>
+          <p>HTTPS的缺点：</p>
+          <ol>
+            <li>通信慢</li>
+            <li>消耗CPU和内存</li>
+            <li>购买证书费用</li>
+          </ol>
+          <hr>
+
+
+          <ul class="pager">
+
+            <li class="previous">
+              <a href="/2018/02/21/binary-search/" data-toggle="tooltip" data-placement="top" title="浅谈二分法">&larr; Previous Post</a>
+            </li>
+
+
+            <li class="next">
+              <a href="/2018/02/21/tcp-ip-overview/" data-toggle="tooltip" data-placement="top" title="TCP/IP 协议栈概述">Next Post &rarr;</a>
+            </li>
+
+          </ul>
+
+
+
+
+
+
+          <!--加入新的评论系统-->
+
+        </div>
+
+        <div class="hidden-xs col-sm-3 toc-col">
+          <div class="toc-wrap">
+            <ol class="toc">
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#1-Client-Server-模式"><span class="toc-text">1. Client-Server 模式</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#2-持久连接和状态管理"><span class="toc-text">2. 持久连接和状态管理</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-持久链接"><span class="toc-text">2.1 持久链接</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-使用Cookie的状态管理"><span class="toc-text">2.2 使用Cookie的状态管理</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#3-HTTP-报文结构"><span class="toc-text">3. HTTP 报文结构</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#4-HTTP-首部字段"><span class="toc-text">4. HTTP 首部字段</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#通用首部字段-General-Header-Fields"><span class="toc-text">通用首部字段 General Header Fields</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#请求首部字段-Request-Header-Fields"><span class="toc-text">请求首部字段 Request Header Fields</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#响应首部字段-Response-Header-Fields"><span class="toc-text">响应首部字段 Response Header Fields</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#实体首部字段-Entity-Header-Fields"><span class="toc-text">实体首部字段 Entity Header Fields</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#5-HTTP-请求方法"><span class="toc-text">5. HTTP 请求方法</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#6-HTTP-响应状态码"><span class="toc-text">6. HTTP 响应状态码</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#7-HTTPS"><span class="toc-text">7. HTTPS</span></a></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Sidebar Container -->
+
+        <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+          <!-- Featured Tags -->
+
+          <section>
+            <!-- no hr -->
+            <h5 class="text-center">
+              <a href="/tags/">FEATURED TAGS</a>
+            </h5>
+            <div class="tags">
+
+              <a class="tag" href="/tags/#Networks" title="Networks">Networks</a>
+
+            </div>
+          </section>
+
+
+          <!-- Friends Blog -->
+
+        </div>
+      </div>
+
+    </div>
+  </article>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../../../../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../../../../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../../../../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

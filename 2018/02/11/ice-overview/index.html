@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    交互式连接建立（ICE）｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/2018/02/11/ice-overview/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../../../../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../../../../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="true" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <!--only post-->
+
+
+  <img class="wechat-title-img" src="/images/title_img/ice.jpg">
+
+
+  <style>
+    header.intro-header {
+    background-image: url('/images/title_img/ice.jpg?imageView2/1/w/1400/h/400/interlace/1/q/90')
+  }
+</style>
+
+  <header class="intro-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <div class="post-heading">
+            <h1>交互式连接建立（ICE）</h1>
+
+            <h2 class="subheading">一种穿透内网的方法</h2>
+
+            <span class="meta">
+              作者 Hayden Wang
+              <span>
+                日期 2018-02-11
+              </span>
+            </span>
+            <div class="tags text-center">
+
+              <a class="tag" href="/tags/#Networks" title="Networks">Networks</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-title-haojen">
+      <span>
+        交互式连接建立（ICE）
+      </span>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <!-- Post Container -->
+        <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+          <p>From <a href="https://zhuanlan.zhihu.com/p/25087606" target="_blank" rel="noopener">知乎专栏</a></p>
+          <p>交互式连接建立是一种标准穿透协议，利用Stun和Turn服务器来帮助端点建立连接。市面上已有不少介绍ICE的资料，像《WebRTC权威指南(第三版)》中的“9.2 交互式连接建立”。但看了那些后，有人还是不能理解，这里试着用一个实例来描述整个过程。ICE协议只是制定规范，没规定怎么实现细节，在细节实现上这里参考Google的WebRTC。</p>
+          <p><img src="/images/webrtc/ice_overview.jpg" alt="ICE"></p>
+          <p>上图就是《WebRTC权威指南(第三版)》中的图9.1。呼叫要交换两种信息，一是候选地址，二是媒体信息。候选地址用于建立网络连接，它存储着和网络连接相关的参数。媒体信息（SDP）用于描述要在对等连接上传输的数据，包括音频、视频和数据。用路和车来比喻的话，候选地址用于造路，媒体信息于用指定要跑什么车。</p>
+          <p>在图中，双方是串行处理媒体、候选地址，但实际中是并发的。举个例子，主叫收到Answer后，它仍可能在收集候选地址，然后通过信令服务器发向被叫。</p>
+          <p>除了主叫必须创建Offer才开始收集候选地址、被叫必须创建Answer才开始收集候选地址外，ICE代理是相互独立地处理媒体和候选地址。（这结论细节参考底下的“四：选定候选地址，并启动媒体”）。</p>
+          <p>和“9.2 交互式连接建立”一样， 这里也把ICE分为六个步骤。下图是例子使用的网络拓扑结构。</p>
+          <p><img src="/images/webrtc/ice_steps.jpg" alt="ICE Steps"></p>
+          <h2 id="1-收集候选地址"><a href="#1-收集候选地址" class="headerlink" title="1. 收集候选地址"></a>1. 收集候选地址</h2>
+          <p>候选地址是或许可用于接收媒体以建立对等连接的 <ip地址, 端口=""> 对，它分四种类型。</ip地址,>
+          </p>
+          <p><img src="/images/webrtc/ice_candidates.jpg" alt="ICE Candidates"></p>
+          <p>具体到例子，以下是此阶段将至少能收集到的候选地址。为简单，不再写A的IP2、B的IP2的服务器反射地址。</p>
+          <table>
+            <thead>
+              <tr>
+                <th>别名</th>
+                <th>类型</th>
+                <th>值</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>A$Cand1</td>
+                <td>host</td>
+                <td>192.168.1.105</td>
+              </tr>
+              <tr>
+                <td>A$Cand2</td>
+                <td>srflx</td>
+                <td>211.161.240.181 (raddr: 192.168.1.105)</td>
+              </tr>
+              <tr>
+                <td>A$Cand3</td>
+                <td>host</td>
+                <td>172.16.40.6</td>
+              </tr>
+              <tr>
+                <td>B$Cand1</td>
+                <td>host</td>
+                <td>192.168.0.204</td>
+              </tr>
+              <tr>
+                <td>B$Cand2</td>
+                <td>srflx</td>
+                <td>11.92.14.8 (raddr: 192.168.0.204)</td>
+              </tr>
+              <tr>
+                <td>B$Cand3</td>
+                <td>host</td>
+                <td>192.168.0.181</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="2-交换候选地址"><a href="#2-交换候选地址" class="headerlink" title="2. 交换候选地址"></a>2. 交换候选地址</h2>
+          <p>A通过信令服务器把<code>A$Cand1</code>、<code>A$Cand2</code>、<code>A$Cand3</code>发向B，相应地，B通过信令服务器把<code>B$Cand1</code>、<code>B$Cand2</code>、<code>B$Cand3</code>发向A。对端收到一个候选地址后会做什么？深入它之前让引入两种对象：P2PTransportChannel、Connection。</p>
+          <p>ICE代理用P2PTransportChannel管理通道（Component）上的网络传输。什么是通道？Webrtc有个概念叫轨道（Track），常见有视频轨、音频轨，而要发送一条轨道中数据，最多可能使用两个通道，分别是Rtp、Rtcp。肯定会有Rtp，Rtcp则可选。一个P2PTransportChannel对应一条通道，如果当前会话要同时处理音频、视频，每条轨道又都包括Rtp、Rtcp，那会话中就存在四个P2PTransportChannel对象。P2PTransportChannel用维护一张连接状态表来管理网络传输，表中一条记录对应一个Connection对象。这里让具体到A的视频Rtp对应的P2PTransportChannel，看它在收到B$Cand1后会做什么。</p>
+          <p>当A收到B发来的<code>B$Cand1</code>后，P2PTransportChannel会向连接状态表新增两条记录，即两个Connection。这时已到通道，地址须是ip:port对。</p>
+          <table>
+            <thead>
+              <tr>
+                <th>本地网卡地址</th>
+                <th>对端地址</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>192.168.1.105:60001</td>
+                <td>192.168.0.204:40001</td>
+                <td>未进行过 STUN 检查</td>
+              </tr>
+              <tr>
+                <td>172.16.40.6:60003</td>
+                <td>192.168.0.204:40001</td>
+                <td>未进行过 STUN 检查</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>此时A不知道该用哪个网卡IP才能把数据成功发向192.168.0.204，于是它只要在有可能的地址对就创建Connection。注意Connection只会基于网卡IP，即host，因为对发送源来说，host才可能是源，其它的只是中间转换出的地址，像srflx。当然，创建时会放弃明显不可能的&lt;网卡地址, 对端地址&gt;对，举个例子，网卡地址是ipv4，而对端地址是ipv6。</p>
+          <p>当收全<code>B$Cand1</code>、<code>B$Cand2</code>、<code>B$Cand3</code>，状态表中就有6条记录。</p>
+          <table>
+            <thead>
+              <tr>
+                <th>本地网卡地址</th>
+                <th>对端地址</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>192.168.1.105:60001</td>
+                <td>192.168.0.204:40001</td>
+                <td>未进行过 STUN 检查</td>
+              </tr>
+              <tr>
+                <td>172.16.40.6:60003</td>
+                <td>192.168.0.204:40001</td>
+                <td>未进行过 STUN 检查</td>
+              </tr>
+              <tr>
+                <td>192.168.1.105:60001</td>
+                <td>11.92.14.8:50002</td>
+                <td>未进行过 STUN 检查</td>
+              </tr>
+              <tr>
+                <td>172.16.40.6:60003</td>
+                <td>11.92.14.8:50002</td>
+                <td>未进行过 STUN 检查</td>
+              </tr>
+              <tr>
+                <td>192.168.1.105:60001</td>
+                <td>192.168.0.181:40003</td>
+                <td>未进行过 STUN 检查</td>
+              </tr>
+              <tr>
+                <td>172.16.40.6:60003</td>
+                <td>192.168.0.181:40003</td>
+                <td>未进行过 STUN 检查</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>表中有一条、或多条、或没有，能够把A的视频Rtp数据发向B的视频Rtp通道，到底怎么个可能性就要执行接下的Stun检查。</p>
+          <h2 id="3-STUN-检查"><a href="#3-STUN-检查" class="headerlink" title="3. STUN 检查"></a>3. STUN 检查</h2>
+          <p>在状态表新建一条记录，即一个Connection，很快就会在此Connection上进行Stun检查。Stun检查具体操作是在此Connection上发Stun Binding请求。由于要能支持Stun应答，每个ICE代理必须内置Stun服务器功能。Stun检查具体步骤见下图。</p>
+          <p><img src="/images/webrtc/stun_ckecking.jpg" alt="STUN 检查"></p>
+          <p>为什么说Stun检查会发现prflx候选项？假如A和Stun服务器之间连接状态不好，在它收到B发来的srflx（11.92.14.8）之后还没得出自个的srflx（211.161.240.181）。虽然A没得到自个的srflx，但这不妨碍对B的srflx这个候选地址进行Stun检查，于是会向11.92.14.8发Stun请求。B收到这个请求，从请求解析出211.161.240.181。虽然这个地址在值上等于A的srflx，但不是从信令服务器得到，而是来自对端的Stun请求。此时B就会以这个prflx向状态表新建Connection。</p>
+          <p>A在之后终于向Stun服务器拿到了自个的srflx，并通过信令服务器发向B。B发现这个srflx值对应的Connection已存在，就不会再创建了。</p>
+          <p>到此可得出个结论：两种原因会导致新建Connection，一是从信令服务器收到候选地址，二是Stun检查发现prflx。不同于从信令服务器得到地址而创建的Connection，Stun检查时创建的Connection一开始就基本能确定连接是畅通的。</p>
+          <h2 id="4-选定候选地址，并启动媒体"><a href="#4-选定候选地址，并启动媒体" class="headerlink" title="4. 选定候选地址，并启动媒体"></a>4. 选定候选地址，并启动媒体</h2>
+          <p>P2PTransportChannel会维护连接状态表，并排序表中记录（SortConnectionsAndUpdateState）。排序指的是计算每条记录的连接“成本”，把成本最低的排在第一条。如何计算成本？这涉及到很多因素，比如发出Stun请求到收到应答经过了的时间，用时越少的“成本”自然会低些。</p>
+          <p>当A有视频Rtp数据要发送时，它检查状态表的第一条记录，如果判断出它的状态是发送就绪，就会用此Connection进行发送。否则直接放弃这个发送任务。媒体模块在处理数据的采集、编码任务时，不用考虑候选地址方面进展怎样了，只是要到发送时才关注下，而即使不能发送也不会影响自个进度；同样，候选地址处理模块也不会关注媒体处理模块的进度。这正是之前写的一个结论：“除了主叫必须创建Offer才开始收集候选地址、被叫必须创建Answer才开始收集候选地址外，ICE代理是相互独立地处理媒体和候选地址”。</p>
+          <p>维护表任务包括新建、删除记录，以及修改记录中的状态字段。删除记录、修改状态都涉及到“长连接”。</p>
+          <h2 id="5-长连接"><a href="#5-长连接" class="headerlink" title="5. 长连接"></a>5. 长连接</h2>
+          <p>为确保NAT映射和过滤规则不在媒体会话期间超时，ICE会不断通过使用中的候选项对发送Stun连接检查。具体到P2PTransportChannel，表现出来的是对状态表中所有记录隔段时间就要发送个Stun Binding请求。如果检测到本来是畅通的Connection上Stun应答超时了，那它就会更改该Connection状态，执行表排序时就有可能会向下掉，严重时会从状态表删除该记录。</p>
+          <p>一记录被删除后，如果之后那候选地址的连接又恢复了，则会基于该候选地址重新创建Connection。</p>
+          <h2 id="6-ICE重新启动"><a href="#6-ICE重新启动" class="headerlink" title="6. ICE重新启动"></a>6. ICE重新启动</h2>
+          <p>分析长连接时，我们已能得出个结论，如果是网络拥堵或通断导致的状态表变化，P2PTransportChannel内部就能处理。但是，如果基地址发生改变，像一网卡被禁用，这就超出P2PTransportChannel可处理范围了，需重启ICE。</p>
+          <hr>
+
+
+          <ul class="pager">
+
+            <li class="previous">
+              <a href="/2018/02/11/git-cheatsheet/" data-toggle="tooltip" data-placement="top" title="Git Cheatsheet">&larr; Previous Post</a>
+            </li>
+
+
+            <li class="next">
+              <a href="/2018/02/11/block-in-oc/" data-toggle="tooltip" data-placement="top" title="Objective-C 中的块对象">Next Post &rarr;</a>
+            </li>
+
+          </ul>
+
+
+
+
+
+
+          <!--加入新的评论系统-->
+
+        </div>
+
+        <div class="hidden-xs col-sm-3 toc-col">
+          <div class="toc-wrap">
+            <ol class="toc">
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#1-收集候选地址"><span class="toc-text">1. 收集候选地址</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#2-交换候选地址"><span class="toc-text">2. 交换候选地址</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#3-STUN-检查"><span class="toc-text">3. STUN 检查</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#4-选定候选地址，并启动媒体"><span class="toc-text">4. 选定候选地址，并启动媒体</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#5-长连接"><span class="toc-text">5. 长连接</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#6-ICE重新启动"><span class="toc-text">6. ICE重新启动</span></a></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Sidebar Container -->
+
+        <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+          <!-- Featured Tags -->
+
+          <section>
+            <!-- no hr -->
+            <h5 class="text-center">
+              <a href="/tags/">FEATURED TAGS</a>
+            </h5>
+            <div class="tags">
+
+              <a class="tag" href="/tags/#Networks" title="Networks">Networks</a>
+
+            </div>
+          </section>
+
+
+          <!-- Friends Blog -->
+
+        </div>
+      </div>
+
+    </div>
+  </article>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../../../../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../../../../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../../../../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

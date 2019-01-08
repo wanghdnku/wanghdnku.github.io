@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    我的树莓派食谱（二）｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/2018/02/22/raspberrypi-cookbook-2/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../../../../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../../../../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="true" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <!--only post-->
+
+
+  <img class="wechat-title-img" src="/images/title_img/respberry_1.jpg">
+
+
+  <style>
+    header.intro-header {
+    background-image: url('/images/title_img/respberry_1.jpg?imageView2/1/w/1400/h/400/interlace/1/q/90')
+  }
+</style>
+
+  <header class="intro-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <div class="post-heading">
+            <h1>我的树莓派食谱（二）</h1>
+
+            <h2 class="subheading">远程控制树莓派</h2>
+
+            <span class="meta">
+              作者 Hayden Wang
+              <span>
+                日期 2018-02-22
+              </span>
+            </span>
+            <div class="tags text-center">
+
+              <a class="tag" href="/tags/#Raspberry Pi" title="Raspberry Pi">Raspberry Pi</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-title-haojen">
+      <span>
+        我的树莓派食谱（二）
+      </span>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <!-- Post Container -->
+        <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+          <h2 id="1-用-SSH-远程控制树莓派"><a href="#1-用-SSH-远程控制树莓派" class="headerlink" title="1. 用 SSH 远程控制树莓派"></a>1. 用 SSH 远程控制树莓派</h2>
+          <p>SSH 是连接远程计算机的一种常见方法，只要是树莓派本身支持的命令，都可以在 SSH 中使用。同时，SSH 也是一种安全的连接方式，因为通信是加密的。这种方法唯一的缺点，可能在于它的运行环境是命令行，而非图形环境。</p>
+          <h3 id="1-1-在树莓派中开启-SSH"><a href="#1-1-在树莓派中开启-SSH" class="headerlink" title="1.1 在树莓派中开启 SSH"></a>1.1 在树莓派中开启 SSH</h3>
+          <p>开启树莓派的 SSH 服务很简单，只需要在终端中打开配置：</p>
+          <figure class="highlight shell">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">sudo raspi-config</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>然后选择 Interface Option, Enable SSH 即可。</p>
+          <p><img src="/images/raspberrypi/config.png" alt="Config"></p>
+          <blockquote>
+            <p>对于较新版本的 Raspbian 来说，SSH 已经自动启用了，所以根本无需修改任何设置。</p>
+          </blockquote>
+          <h3 id="1-2-在终端远程登录树莓派"><a href="#1-2-在终端远程登录树莓派" class="headerlink" title="1.2 在终端远程登录树莓派"></a>1.2 在终端远程登录树莓派</h3>
+          <p>从一台安装了 MacOS 或 Linux 的计算机上面连接树莓派，只需要打开 终端窗口，键入下列命令即可：</p>
+          <figure class="highlight shell">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">ssh pi@192.168.1.115 </span><br><span class="line"><span class="meta">#</span><span class="bash"> 或者 ssh 192.168.1.115 -l pi</span></span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>这里的 IP 地址（192.168.1.16）是树莓派的内网 IP 地址。然后输入密码就可以登录到树莓派了。</p>
+          <p><img src="/images/raspberrypi/ssh.png" alt="SSH Example"></p>
+          <blockquote>
+            <p>如果从 Windows 远程连接树莓派的话，可以使用 Putty 来启动一个 SSH 会话。</p>
+          </blockquote>
+          <h3 id="1-3-使用-SFTP-管理树莓派上的文件"><a href="#1-3-使用-SFTP-管理树莓派上的文件" class="headerlink" title="1.3 使用 SFTP 管理树莓派上的文件"></a>1.3 使用 SFTP 管理树莓派上的文件</h3>
+          <p>SFTP 全称 SSH File Transfer Protocol，为 SSH 的其中一部分，是一种传输文件至服务器的安全方式。其实在 SSH 软件包中，已经包含了一个 SFTP 安全文件信息传输子系统，SFTP 本身没有单独的守护进程。和 SSH 一样，SFTP 同样是使用加密传输认证信息和传输的数据，所以，使用 SFTP 可以认为安全的。但是，由于这种传输方式使用了加密/解密技术，所以传输效率比普通的 FTP 要低。</p>
+          <p>要用 SFTP 访问树莓派上的文件，只需要安装 <a href="https://www.filezilla.cn/download/client" target="_blank" rel="noopener">FileZilla</a> 客户端，输入树莓派的地址，用户名，密码，端口号（SSH 默认端口是 22）即可。</p>
+          <p><img src="/images/raspberrypi/filezilla.png" alt="FileZilla"></p>
+          <hr>
+          <p><br></p>
+          <h2 id="2-用-VNC-远程控制树莓派"><a href="#2-用-VNC-远程控制树莓派" class="headerlink" title="2. 用 VNC 远程控制树莓派"></a>2. 用 VNC 远程控制树莓派</h2>
+          <p>除了使用 SSH 命令行登录树莓派，还可以通过 VNC 远程访问树莓派的图形界面。</p>
+          <h3 id="2-1-在树莓派上安装-VNC-服务器"><a href="#2-1-在树莓派上安装-VNC-服务器" class="headerlink" title="2.1 在树莓派上安装 VNC 服务器"></a>2.1 在树莓派上安装 VNC 服务器</h3>
+          <p>在树莓派上打开终端会话（或 SSH 会话），然后运行下列命令。<br>
+            <figure class="highlight shell">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install tightvncserver</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <p>安装好 VNC 服务器之后，请使用下列命令来运行它。<br>
+            <figure class="highlight shell">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">vncserver :1</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <p>第一次运行时，会要求建立密码，也就是说，今后任何远程连接树莓派的人，必须输入该密码后才能获得访问权限。</p>
+          <h3 id="2-2-远程登录树莓派图形界面"><a href="#2-2-远程登录树莓派图形界面" class="headerlink" title="2.2 远程登录树莓派图形界面"></a>2.2 远程登录树莓派图形界面</h3>
+          <p>为了从远程计算机连接树莓派，需要安装 VNC 客户端。<a href="http://www.realvnc.com" target="_blank" rel="noopener">RealVNC</a> 是一个不错的选择，可以很好地与 tightvnc 建立连接， 并且支持 Windows、Linux、MacOS 甚至 iOS 系统。</p>
+          <p>当运行客户端程序的时候，它会要求输入你想连接的 VNC 服务器的 IP 地址，也就是你的树莓派的 IP 地址。可以在 IP 地址后面输入“:1”，用以表示你希望连接的桌面号为 1。之后，会要求输入密码。</p>
+          <blockquote>
+            <p>注意：这是指安装 tightvncserver 后设置的那个密码，并不要求与树莓派密码一致。</p>
+          </blockquote>
+          <p>现在，就可以顺利地看到树莓派的桌面了：</p>
+          <p><img src="/images/raspberrypi/vnc_viewer.png" alt="VNC Viewer"></p>
+          <h3 id="2-3-让树莓派每次开机自动启动-VNC-服务"><a href="#2-3-让树莓派每次开机自动启动-VNC-服务" class="headerlink" title="2.3 让树莓派每次开机自动启动 VNC 服务"></a>2.3 让树莓派每次开机自动启动 VNC 服务</h3>
+          <p>如果你希望树莓派每次重启都会自动启动 VNC 服务器的话，可以借助下列命令来实现。<br>
+            <figure class="highlight shell">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">cd /home/pi</span><br><span class="line">cd .config</span><br><span class="line">mkdir autostart</span><br><span class="line">cd autostart</span><br><span class="line">vim tightvnc.desktop</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <p>将下列内容粘贴到文件中，并 :wq 保存：<br>
+            <figure class="highlight plain">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">[Desktop Entry]</span><br><span class="line">Type=Application</span><br><span class="line">Name=TightVNC</span><br><span class="line">Exec=vncserver :1</span><br><span class="line">StartupNotify=false</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <p>树莓派一旦设置为自动登录并进入桌面环境的话，VNC 服务器就会在重新启动后自动启动。</p>
+          <hr>
+          <p><br></p>
+          <h2 id="3-在-MacOS-的-Finder-中访问树莓派"><a href="#3-在-MacOS-的-Finder-中访问树莓派" class="headerlink" title="3. 在 MacOS 的 Finder 中访问树莓派"></a>3. 在 MacOS 的 Finder 中访问树莓派</h2>
+          <p>只需要对树莓派做一些简单的配置，就能让树莓派出现在 MacOS 的 Finder 列表中，从而可以使用 Finder 来管理其文件系统。</p>
+          <h3 id="3-1-安装并配置-netatalk"><a href="#3-1-安装并配置-netatalk" class="headerlink" title="3.1 安装并配置 netatalk"></a>3.1 安装并配置 netatalk</h3>
+          <p>首先，在树莓派上输入下列命令来安装 netatalk。</p>
+          <figure class="highlight shell">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">sudo apt-get install netatalk</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>对于树莓派来说，还有一些配置需要修改。</p>
+          <figure class="highlight shell">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">sudo apt-get install avahi-daemon</span><br><span class="line">sudo update-rc.d avahi-daemon defaults</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>然后，输入下列命令。</p>
+          <figure class="highlight shell">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">sudo vim /etc/avahi/services/afpd.service</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>将下列内容粘贴到该文件中并保存。</p>
+          <figure class="highlight xml">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">&lt;?xml version="1.0" standalone='no'?&gt;<span class="comment">&lt;!--*-nxml-*--&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE service-group SYSTEM "avahi-service.dtd"&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">service-group</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span> <span class="attr">replace-wildcards</span>=<span class="string">"yes"</span>&gt;</span>%h<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">service</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">type</span>&gt;</span>_afpovertcp._tcp<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">port</span>&gt;</span>548<span class="tag">&lt;/<span class="name">port</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">service-group</span>&gt;</span></span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>为了让它作为守护进程运行，可以使用如下所示的命令：</p>
+          <figure class="highlight shell">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">sudo /etc/init.d/avahi-daemon restart</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="3-2-在-Finder-中登录-AFP-服务"><a href="#3-2-在-Finder-中登录-AFP-服务" class="headerlink" title="3.2 在 Finder 中登录 AFP 服务"></a>3.2 在 Finder 中登录 AFP 服务</h3>
+          <p>回到 Mac 上， 在 Finder 菜单中选择 Go→Connect to Server， 然后输入 afp://192.168.1.16 作为服务器地址（你要使用自己树莓派的 IP 地址替换这里的地址）。 然后，单击 Connect，系统就会提示登录。使用树莓派默认的用户 pi 和相应密码登录后，Finder 就会显示树莓派 home 目录下面的内容。</p>
+          <p><img src="/images/raspberrypi/afp.png" alt="AFP"></p>
+          <h2 id="4-在外网中访问树莓派"><a href="#4-在外网中访问树莓派" class="headerlink" title="4. 在外网中访问树莓派"></a>4. 在外网中访问树莓派</h2>
+          <p>由于 NAT 的存在，一般个人设备所使用的 IP 并不能在公网中通用，NAT 会将公网地址转换为内网地址，并建立一个映射。因此，想要在外网中直接访问树莓派，通过内网地址是不行的，必须想办法穿透 NAT。</p>
+          <h3 id="4-1-DMZ-主机"><a href="#4-1-DMZ-主机" class="headerlink" title="4.1 DMZ 主机"></a>4.1 DMZ 主机</h3>
+          <p>待续</p>
+          <h3 id="4-2-使用路由器的端口映射"><a href="#4-2-使用路由器的端口映射" class="headerlink" title="4.2 使用路由器的端口映射"></a>4.2 使用路由器的端口映射</h3>
+          <p>待续</p>
+          <h3 id="4-3-使用花生壳的服务"><a href="#4-3-使用花生壳的服务" class="headerlink" title="4.3 使用花生壳的服务"></a>4.3 使用花生壳的服务</h3>
+          <p>待续</p>
+          <h3 id="4-4-配合-DDNS-服务，优雅地访问树莓派"><a href="#4-4-配合-DDNS-服务，优雅地访问树莓派" class="headerlink" title="4.4 配合 DDNS 服务，优雅地访问树莓派"></a>4.4 配合 DDNS 服务，优雅地访问树莓派</h3>
+          <p>现在我们所使用的上网服务，IP 地址会在上网时由运营商分配，这样以来，每次访问树莓派就要重新查询目前路由器所分配的外网地址，十分麻烦。还好现在的路由器一般都会支持 DDNS 服务。</p>
+          <hr>
+
+
+          <ul class="pager">
+
+            <li class="previous">
+              <a href="/2018/02/22/raspberrypi-cookbook-3/" data-toggle="tooltip" data-placement="top" title="我的树莓派食谱（三）">&larr; Previous Post</a>
+            </li>
+
+
+            <li class="next">
+              <a href="/2018/02/22/raspberrypi-cookbook-1/" data-toggle="tooltip" data-placement="top" title="我的树莓派食谱（一）">Next Post &rarr;</a>
+            </li>
+
+          </ul>
+
+
+
+
+
+
+          <!--加入新的评论系统-->
+
+        </div>
+
+        <div class="hidden-xs col-sm-3 toc-col">
+          <div class="toc-wrap">
+            <ol class="toc">
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#1-用-SSH-远程控制树莓派"><span class="toc-text">1. 用 SSH 远程控制树莓派</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-在树莓派中开启-SSH"><span class="toc-text">1.1 在树莓派中开启 SSH</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-在终端远程登录树莓派"><span class="toc-text">1.2 在终端远程登录树莓派</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-使用-SFTP-管理树莓派上的文件"><span class="toc-text">1.3 使用 SFTP 管理树莓派上的文件</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#2-用-VNC-远程控制树莓派"><span class="toc-text">2. 用 VNC 远程控制树莓派</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-在树莓派上安装-VNC-服务器"><span class="toc-text">2.1 在树莓派上安装 VNC 服务器</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-远程登录树莓派图形界面"><span class="toc-text">2.2 远程登录树莓派图形界面</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-让树莓派每次开机自动启动-VNC-服务"><span class="toc-text">2.3 让树莓派每次开机自动启动 VNC 服务</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#3-在-MacOS-的-Finder-中访问树莓派"><span class="toc-text">3. 在 MacOS 的 Finder 中访问树莓派</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-安装并配置-netatalk"><span class="toc-text">3.1 安装并配置 netatalk</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-在-Finder-中登录-AFP-服务"><span class="toc-text">3.2 在 Finder 中登录 AFP 服务</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#4-在外网中访问树莓派"><span class="toc-text">4. 在外网中访问树莓派</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-DMZ-主机"><span class="toc-text">4.1 DMZ 主机</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-使用路由器的端口映射"><span class="toc-text">4.2 使用路由器的端口映射</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-使用花生壳的服务"><span class="toc-text">4.3 使用花生壳的服务</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-配合-DDNS-服务，优雅地访问树莓派"><span class="toc-text">4.4 配合 DDNS 服务，优雅地访问树莓派</span></a></li>
+                </ol>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Sidebar Container -->
+
+        <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+          <!-- Featured Tags -->
+
+          <section>
+            <!-- no hr -->
+            <h5 class="text-center">
+              <a href="/tags/">FEATURED TAGS</a>
+            </h5>
+            <div class="tags">
+
+              <a class="tag" href="/tags/#Raspberry Pi" title="Raspberry Pi">Raspberry Pi</a>
+
+            </div>
+          </section>
+
+
+          <!-- Friends Blog -->
+
+        </div>
+      </div>
+
+    </div>
+  </article>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../../../../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../../../../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../../../../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

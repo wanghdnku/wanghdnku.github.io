@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    越过长城，走向世界｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/2018/02/09/Shadowsocks-overview/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../../../../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../../../../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="true" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <!--only post-->
+
+
+  <img class="wechat-title-img" src="/images/title_img/great_wall.jpg">
+
+
+  <style>
+    header.intro-header {
+    background-image: url('/images/title_img/great_wall.jpg?imageView2/1/w/1400/h/400/interlace/1/q/90')
+  }
+</style>
+
+  <header class="intro-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <div class="post-heading">
+            <h1>越过长城，走向世界</h1>
+
+            <h2 class="subheading">使用 Shadowsocks 科学上网</h2>
+
+            <span class="meta">
+              作者 Hayden Wang
+              <span>
+                日期 2018-02-09
+              </span>
+            </span>
+            <div class="tags text-center">
+
+              <a class="tag" href="/tags/#Networks" title="Networks">Networks</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-title-haojen">
+      <span>
+        越过长城，走向世界
+      </span>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <!-- Post Container -->
+        <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+          <blockquote>
+            <p><strong>Across the Great Wall we can reach every corner in the world.</strong></p>
+          </blockquote>
+          <h2 id="1-SOCK5-and-ShadowSocks"><a href="#1-SOCK5-and-ShadowSocks" class="headerlink" title="1. SOCK5 and ShadowSocks"></a>1. SOCK5 and ShadowSocks</h2>
+          <h2 id="2-Server-部分"><a href="#2-Server-部分" class="headerlink" title="2. Server 部分"></a>2. Server 部分</h2>
+          <h3 id="2-1-购买境外-VPS-并远程登录"><a href="#2-1-购买境外-VPS-并远程登录" class="headerlink" title="2.1 购买境外 VPS 并远程登录"></a>2.1 购买境外 VPS 并远程登录</h3>
+          <ul>
+            <li>linode</li>
+            <li>Dgital Ocean</li>
+            <li></li>
+          </ul>
+          <h3 id="2-2-安装-Shadowsocks"><a href="#2-2-安装-Shadowsocks" class="headerlink" title="2.2 安装 Shadowsocks"></a>2.2 安装 Shadowsocks</h3>
+          <blockquote>
+            <p>说明：以下命令均在最高权限用户 root 下运行。</p>
+          </blockquote>
+          <p>Debian / Ubuntu 用户运行：<br>
+            <figure class="highlight shell">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">apt-get install python-pip</span><br><span class="line">pip install shadowsocks</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <p>CentOS 用户运行：<br>
+            <figure class="highlight shell">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">yum install python-setuptools &amp;&amp; easy_install pip</span><br><span class="line">pip install shadowsocks</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <h3 id="2-3-优化-Shadowsocks-性能（可选）"><a href="#2-3-优化-Shadowsocks-性能（可选）" class="headerlink" title="2.3 优化 Shadowsocks 性能（可选）"></a>2.3 优化 Shadowsocks 性能（可选）</h3>
+          <p>按照 SS 官方 Wiki，有如下优化策略：</p>
+          <ol>
+            <li>
+              <p>创建 local.conf 配置文件：<code>vim /etc/sysctl.d/local.conf</code></p>
+            </li>
+            <li>
+              <p>在配置文件中输入以下内容并保存：</p>
+              <figure class="highlight yaml">
+                <table>
+                  <tr>
+                    <td class="code">
+                      <pre><span class="line"><span class="comment"># max open files</span></span><br><span class="line"><span class="string">fs.file-max</span> <span class="string">=</span> <span class="number">51200</span></span><br><span class="line"><span class="comment"># max read buffer</span></span><br><span class="line"><span class="string">net.core.rmem_max</span> <span class="string">=</span> <span class="number">67108864</span></span><br><span class="line"><span class="comment"># max write buffer</span></span><br><span class="line"><span class="string">net.core.wmem_max</span> <span class="string">=</span> <span class="number">67108864</span></span><br><span class="line"><span class="comment"># default read buffer</span></span><br><span class="line"><span class="string">net.core.rmem_default</span> <span class="string">=</span> <span class="number">65536</span></span><br><span class="line"><span class="comment"># default write buffer</span></span><br><span class="line"><span class="string">net.core.wmem_default</span> <span class="string">=</span> <span class="number">65536</span></span><br><span class="line"><span class="comment"># max processor input queue</span></span><br><span class="line"><span class="string">net.core.netdev_max_backlog</span> <span class="string">=</span> <span class="number">4096</span></span><br><span class="line"><span class="comment"># max backlog</span></span><br><span class="line"><span class="string">net.core.somaxconn</span> <span class="string">=</span> <span class="number">4096</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># resist SYN flood attacks</span></span><br><span class="line"><span class="string">net.ipv4.tcp_syncookies</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line"><span class="comment"># reuse timewait sockets when safe</span></span><br><span class="line"><span class="string">net.ipv4.tcp_tw_reuse</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line"><span class="comment"># turn off fast timewait sockets recycling</span></span><br><span class="line"><span class="string">net.ipv4.tcp_tw_recycle</span> <span class="string">=</span> <span class="number">0</span></span><br><span class="line"><span class="comment"># short FIN timeout</span></span><br><span class="line"><span class="string">net.ipv4.tcp_fin_timeout</span> <span class="string">=</span> <span class="number">30</span></span><br><span class="line"><span class="comment"># short keepalive time</span></span><br><span class="line"><span class="string">net.ipv4.tcp_keepalive_time</span> <span class="string">=</span> <span class="number">1200</span></span><br><span class="line"><span class="comment"># outbound port range</span></span><br><span class="line"><span class="string">net.ipv4.ip_local_port_range</span> <span class="string">=</span> <span class="number">10000</span> <span class="number">65000</span></span><br><span class="line"><span class="comment"># max SYN backlog</span></span><br><span class="line"><span class="string">net.ipv4.tcp_max_syn_backlog</span> <span class="string">=</span> <span class="number">4096</span></span><br><span class="line"><span class="comment"># max timewait sockets held by system simultaneously</span></span><br><span class="line"><span class="string">net.ipv4.tcp_max_tw_buckets</span> <span class="string">=</span> <span class="number">5000</span></span><br><span class="line"><span class="comment"># turn on TCP Fast Open on both client and server side</span></span><br><span class="line"><span class="string">net.ipv4.tcp_fastopen</span> <span class="string">=</span> <span class="number">3</span></span><br><span class="line"><span class="comment"># TCP receive buffer</span></span><br><span class="line"><span class="string">net.ipv4.tcp_rmem</span> <span class="string">=</span> <span class="number">4096</span> <span class="number">87380</span> <span class="number">67108864</span></span><br><span class="line"><span class="comment"># TCP write buffer</span></span><br><span class="line"><span class="string">net.ipv4.tcp_wmem</span> <span class="string">=</span> <span class="number">4096</span> <span class="number">65536</span> <span class="number">67108864</span></span><br><span class="line"><span class="comment"># turn on path MTU discovery</span></span><br><span class="line"><span class="string">net.ipv4.tcp_mtu_probing</span> <span class="string">=</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># for high-latency network</span></span><br><span class="line"><span class="string">net.ipv4.tcp_congestion_control</span> <span class="string">=</span> <span class="string">hybla</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># for low-latency network, use cubic instead</span></span><br><span class="line"><span class="comment"># net.ipv4.tcp_congestion_control = cubic</span></span><br></pre>
+                    </td>
+                  </tr>
+                </table>
+              </figure>
+            </li>
+            <li>
+              <p>使配置生效：<code>sysctl --system</code></p>
+            </li>
+          </ol>
+          <h3 id="2-4-配置-Shadowsocks-配置文件"><a href="#2-4-配置-Shadowsocks-配置文件" class="headerlink" title="2.4 配置 Shadowsocks 配置文件"></a>2.4 配置 Shadowsocks 配置文件</h3>
+          <p>建议把 SS 的配置文件放置在当前用户主目录下的 ss 文件夹内，对于 root 用户而言，则是：<code>/root/ss</code> 目录。其余用户一般则是：<code>/home/用户名</code> 目录。</p>
+          <p>下面我们以 root 用户为例：</p>
+          <ol>
+            <li>
+              <p>在 root 文件夹内，新建 ss/ssserver.json 配置文件：<code>vim ~/ss/ssserver.json</code></p>
+            </li>
+            <li>
+              <p>编辑配置文件，依然是按 i 进入编辑，按 ESC 退出编辑，按 :wq 保存并退出：</p>
+              <figure class="highlight">
+                <table>
+                  <tr>
+                    <td class="code">
+                      <pre><span class="line">&#123;</span><br><span class="line">    "server": "my_server_ip", // 这里输入本机的 IP 地址</span><br><span class="line">    "server_port": 8388, // 为了安全，可修改为大于 1024 的数字</span><br><span class="line">    "local_address": "127.0.0.1",</span><br><span class="line">    "local_port": 1080, // 为了安全，可修改为大于 1024 的数字</span><br><span class="line">    "password": "mypassword", // 设置一个密码</span><br><span class="line">    "timeout": 300,</span><br><span class="line">    "method": "aes-256-cfb",</span><br><span class="line">    "fast_open": false</span><br><span class="line">&#125;</span><br></pre>
+                    </td>
+                  </tr>
+                </table>
+              </figure>
+            </li>
+          </ol>
+          <h3 id="2-5-启动并永久运行-Shadowsocks-服务端"><a href="#2-5-启动并永久运行-Shadowsocks-服务端" class="headerlink" title="2.5 启动并永久运行 Shadowsocks 服务端"></a>2.5 启动并永久运行 Shadowsocks 服务端</h3>
+          <p>一句命令即可启动并永久运行：<br>
+            <figure class="highlight shell">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">nohup ssserver -c /root/ss/ssserver.json -d start &amp;</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <blockquote>
+            <p>说明： ssserver 是 SS 的服务端命令。-c 表示以配置文件的方式运行 SS，/root/ss/ssserver.json 则是步骤 4 中新建的配置文件的路径。-d 表示在后台运行，这样允许用户进行其他操作。start 就是启动。nohup 以及最后的 &amp; 是让 SS 服务端一直运行，并把运行日志输出到当前用户主目录下的 nohup.out 文件中。</p>
+          </blockquote>
+          <p>停止 SS 服务端：<br>
+            <figure class="highlight shell">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line">ssserver -c /root/ss/ssserver.json -d stop</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <blockquote>
+            <p>说明： 无需 nohup 和 &amp;，把 start 换成 stop</p>
+          </blockquote>
+          <h3 id="2-6-使用-BBR-加速（可选）"><a href="#2-6-使用-BBR-加速（可选）" class="headerlink" title="2.6 使用 BBR 加速（可选）"></a>2.6 使用 BBR 加速（可选）</h3>
+          <hr>
+          <h2 id="3-Client-部分"><a href="#3-Client-部分" class="headerlink" title="3. Client 部分"></a>3. Client 部分</h2>
+          <h3 id="3-1-Linux-端解决方案"><a href="#3-1-Linux-端解决方案" class="headerlink" title="3.1 Linux 端解决方案"></a>3.1 Linux 端解决方案</h3>
+          <figure class="highlight shell">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line">sslocal -s server_ip -p server_port -l 1080 -k password -t 600 -m aes-256-cfb</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <ul>
+            <li>-s 表示服务IP</li>
+            <li>-p 指的是服务端的端口</li>
+            <li>-l 是本地端口默认是1080（可以替换成任何端口号，只需保证端口不冲突）</li>
+            <li>-k 是密码（要加””）</li>
+            <li>-t 超时默认300</li>
+            <li>-m是加密方法默认aes-256-cfb</li>
+          </ul>
+          <blockquote>
+            <p>可以将以上命令写入一个sh文件中，以后每次运行一下脚本就可以</p>
+          </blockquote>
+          <h3 id="3-2-MacOS-端解决方案"><a href="#3-2-MacOS-端解决方案" class="headerlink" title="3.2 MacOS 端解决方案"></a>3.2 MacOS 端解决方案</h3>
+          <h3 id="3-3-Windows-端解决方案"><a href="#3-3-Windows-端解决方案" class="headerlink" title="3.3 Windows 端解决方案"></a>3.3 Windows 端解决方案</h3>
+          <h3 id="3-4-iOS-端解决方案"><a href="#3-4-iOS-端解决方案" class="headerlink" title="3.4 iOS 端解决方案"></a>3.4 iOS 端解决方案</h3>
+          <h3 id="3-5-Android-端解决方案"><a href="#3-5-Android-端解决方案" class="headerlink" title="3.5 Android 端解决方案"></a>3.5 Android 端解决方案</h3>
+          <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2>
+          <ul>
+            <li><a href="https://www.loyalsoldier.me/fuck-the-gfw-with-my-own-shadowsocks-server/" target="_blank" rel="noopener">https://www.loyalsoldier.me/fuck-the-gfw-with-my-own-shadowsocks-server/</a></li>
+          </ul>
+          <hr>
+
+
+          <ul class="pager">
+
+            <li class="previous">
+              <a href="/2018/02/11/block-in-oc/" data-toggle="tooltip" data-placement="top" title="Objective-C 中的块对象">&larr; Previous Post</a>
+            </li>
+
+
+            <li class="next">
+              <a href="/2018/02/08/oc-memory-management/" data-toggle="tooltip" data-placement="top" title="Objective-C 内存管理概述">Next Post &rarr;</a>
+            </li>
+
+          </ul>
+
+
+
+
+
+
+          <!--加入新的评论系统-->
+
+        </div>
+
+        <div class="hidden-xs col-sm-3 toc-col">
+          <div class="toc-wrap">
+            <ol class="toc">
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#1-SOCK5-and-ShadowSocks"><span class="toc-text">1. SOCK5 and ShadowSocks</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#2-Server-部分"><span class="toc-text">2. Server 部分</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-购买境外-VPS-并远程登录"><span class="toc-text">2.1 购买境外 VPS 并远程登录</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-安装-Shadowsocks"><span class="toc-text">2.2 安装 Shadowsocks</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-优化-Shadowsocks-性能（可选）"><span class="toc-text">2.3 优化 Shadowsocks 性能（可选）</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-配置-Shadowsocks-配置文件"><span class="toc-text">2.4 配置 Shadowsocks 配置文件</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-启动并永久运行-Shadowsocks-服务端"><span class="toc-text">2.5 启动并永久运行 Shadowsocks 服务端</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-使用-BBR-加速（可选）"><span class="toc-text">2.6 使用 BBR 加速（可选）</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#3-Client-部分"><span class="toc-text">3. Client 部分</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-Linux-端解决方案"><span class="toc-text">3.1 Linux 端解决方案</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-MacOS-端解决方案"><span class="toc-text">3.2 MacOS 端解决方案</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Windows-端解决方案"><span class="toc-text">3.3 Windows 端解决方案</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-iOS-端解决方案"><span class="toc-text">3.4 iOS 端解决方案</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-Android-端解决方案"><span class="toc-text">3.5 Android 端解决方案</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Sidebar Container -->
+
+        <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+          <!-- Featured Tags -->
+
+          <section>
+            <!-- no hr -->
+            <h5 class="text-center">
+              <a href="/tags/">FEATURED TAGS</a>
+            </h5>
+            <div class="tags">
+
+              <a class="tag" href="/tags/#Networks" title="Networks">Networks</a>
+
+            </div>
+          </section>
+
+
+          <!-- Friends Blog -->
+
+        </div>
+      </div>
+
+    </div>
+  </article>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../../../../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../../../../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../../../../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="false" data-istags="false
+" data-ishome="true">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <style>
+    .custom-haojen-container .post-preview:nth-of-type(1),
+  .custom-haojen-container .post-preview-poetry:nth-of-type(1) {
+    text-align: center;
+    background-repeat: no-repeat;
+    border-radius: 3px;
+    background-size: cover;
+    padding: 0;
+    height: 300px;
+    display: table;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.16);
+  }
+
+  /*去掉诗歌的背景图片*/
+  .custom-haojen-container .post-preview-poetry:nth-of-type(1) {
+    background-image: none !important;
+    background-color: rgba(255, 248, 220, 0.5);
+  }
+
+  .custom-haojen-container .post-preview:nth-child(1) h2,
+  .custom-haojen-container .post-preview:nth-child(1) .post-meta,
+  .custom-haojen-container .post-preview:nth-child(1) .post-subtitle {
+    text-shadow: 0 0 40px rgba(0, 0, 0, 1);
+    letter-spacing: 1px;
+    color: #fff;
+    margin-top: 0;
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+
+  .custom-haojen-container .post-preview:nth-child(1) .post-meta {
+    font-size: .9em;
+    font-weight: 300;
+    margin-top: 0;
+  }
+
+  .custom-haojen-container .post-preview-poetry:nth-child(1) .post-subtitle {
+    letter-spacing: 6px;
+    font-size: 18px;
+    font-family: unset;
+    font-weight: 400;
+    color: rgba(0, 0, 0, .75)
+  }
+
+  /*不显示摘要*/
+  .custom-haojen-container .post-preview:nth-child(1) .post-content-preview {
+    display: none
+  }
+
+  /*只第一个显示背景图片*/
+  .custom-haojen-container .post-preview:not(:nth-child(1)) {
+    background-image: none !important;
+  }
+
+  /*第一个分界线去掉*/
+  .custom-haojen-container hr:nth-of-type(1) {
+    display: none;
+  }
+
+  /*主题*/
+  .custom-haojen-container .post-preview:nth-of-type(1)>a {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  /*诗词标题*/
+  .custom-haojen-container .post-preview-poetry:nth-child(1) h2 {
+    font-size: 35px;
+    font-family: STKaiti;
+    color: rgba(0, 0, 0, .8);
+  }
+
+  .custom-haojen-container .post-preview-poetry:nth-of-type(1) .post-meta {
+    color: #0e2231;
+  }
+
+  @media (max-width: 768px) {
+    .custom-haojen-container .post-preview:nth-child(1) {
+      height: 240px;
+    }
+
+    .custom-haojen-container .post-preview-poetry:nth-child(1) h2 {
+      font-size: 28px !important;
+      margin-top: 0;
+    }
+
+    .custom-haojen-container .post-preview:nth-child(1) .post-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .custom-haojen-container .post-preview:nth-of-type(1)>a {
+      padding: 20px
+    }
+  }
+
+  /*手机屏幕*/
+  @media (max-width: 400px) {
+    .custom-haojen-container .post-preview:nth-child(1) {
+      height: 195px;
+    }
+
+    .custom-haojen-container .post-preview-poetry:nth-child(1) h2 {
+      font-size: 20px !important;
+    }
+
+    .custom-haojen-container .post-preview:nth-child(1) .post-subtitle {
+      font-size: 16px;
+    }
+
+    .custom-haojen-container .post-preview:nth-child(1) a {
+      padding: 30px 20px;
+    }
+  }
+</style>
+
+  <!-- Page Header -->
+  <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 visible-xs-block visible-sm-block">
+    <div class="row">
+      <header class="intro-header">
+        <div class="container">
+          <div class="site-heading text-center">
+            <div class="about-me">
+              <!--移动端头部显示-->
+              <img src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg">
+              <h5><a href="/about/">Hayden Wang</a></h5>
+              <p>汲汲骎骎，月异日新</p>
+            </div>
+          </div>
+        </div>
+      </header>
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="container custom-haojen-container">
+    <!-- Post Container -->
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-1 col-md-8 col-md-offset-1 col-sm-12 col-xs-12 post-container">
+        <!-- Main Content -->
+
+
+
+        <div class="post-preview " style="background-image: url('/images/title_img/cpu.jpg')">
+          <a href="/2018/03/05/principle-of-compiler/">
+            <h2 class="post-title">
+              编译器的工作过程
+            </h2>
+            <p class="post-meta">
+              <i class="fa fa-calendar" aria-hidden="true"></i> 2018-03-05
+            </p>
+
+            <h3 class="post-subtitle">
+              链接、装载与库
+            </h3>
+
+            <div class="post-content-preview">
+              <p>
+
+                转自：http://www.ruanyifeng.com/blog/2014/11/compiler.html
+
+                源码要运行，必须先转成二进制的机器码。这是编译器的任务。
+                比如，下面这段源码（假定文件名叫做test.c）。
+
+
+
+
+                #include ..
+              </p>
+            </div>
+          </a>
+
+        </div>
+
+        <hr>
+
+
+
+        <div class="post-preview " style="background-image: url('/images/title_img/information.jpg')">
+          <a href="/2018/03/05/string-matching/">
+            <h2 class="post-title">
+              字符串匹配算法总结
+            </h2>
+            <p class="post-meta">
+              <i class="fa fa-calendar" aria-hidden="true"></i> 2018-03-05
+            </p>
+
+            <h3 class="post-subtitle">
+              String Matching Algorithms
+            </h3>
+
+            <div class="post-content-preview">
+              <p>
+                下述算法假设在长度为 n 的母串中匹配长度为 m 的子串。
+                Brute-Force 算法
+                顺序遍历母串，将每个字符作为匹配的起始字符，判断是否匹配子串。时间复杂度为 $O(mn)$。
+                Rabin-Karp 算法
+                将每一个匹配子串映射为一个哈希值。例如，将子串看做一个多进制数，比较它的值与母串中相..
+              </p>
+            </div>
+          </a>
+
+        </div>
+
+        <hr>
+
+
+
+        <div class="post-preview " style="background-image: url('/images/title_img/function.jpg')">
+          <a href="/2018/03/05/dynamic-programming-examples/">
+            <h2 class="post-title">
+              从几个常见问题看动态规划
+            </h2>
+            <p class="post-meta">
+              <i class="fa fa-calendar" aria-hidden="true"></i> 2018-03-05
+            </p>
+
+            <h3 class="post-subtitle">
+              Dynamic Programming Examples
+            </h3>
+
+            <div class="post-content-preview">
+              <p>
+                背包问题
+                最长公共子串
+                状态转移方程
+
+
+
+
+                if word_a[i] == word_b[j]: cell[i][j] = cell[i][j] + 1else: cell[i][j] = 0
+
+
+
+
+                最长公共子序列
+                ..
+              </p>
+            </div>
+          </a>
+
+        </div>
+
+        <hr>
+
+
+
+        <div class="post-preview " style="background-image: url('/images/title_img/global_network.png')">
+          <a href="/2018/03/03/long-connection/">
+            <h2 class="post-title">
+              谈谈长连接
+            </h2>
+            <p class="post-meta">
+              <i class="fa fa-calendar" aria-hidden="true"></i> 2018-03-03
+            </p>
+
+            <h3 class="post-subtitle">
+              TCP 与 HTTP 的 Keep-Alive
+            </h3>
+
+            <div class="post-content-preview">
+              <p>
+                写在前面
+                HTTP 和 TCP/IP 的关系
+                HTTP的长连接和短连接本质上是TCP长连接和短连接。HTTP属于应用层协议，在传输层使用TCP协议，在网络层使用IP协议。IP协议主要解决网络路由和寻址问题，TCP协议主要解决如何在IP层之上可靠的传递数据包，使在网络上的另一端收到发端发出的所有包..
+              </p>
+            </div>
+          </a>
+
+        </div>
+
+        <hr>
+
+
+
+        <div class="post-preview " style="background-image: url('/images/title_img/path.jpg')">
+          <a href="/2018/03/01/graph-shortest-path/">
+            <h2 class="post-title">
+              图论 (四)：最短路径算法
+            </h2>
+            <p class="post-meta">
+              <i class="fa fa-calendar" aria-hidden="true"></i> 2018-03-01
+            </p>
+
+            <h3 class="post-subtitle">
+              单源最短路径 & 多源最短路径
+            </h3>
+
+            <div class="post-content-preview">
+              <p>
+                单源最短路径问题
+
+                对于每条边都有一个权值的图来说，单源最短路径问题是指从某个节点出 发，到其他节点的最短距离。该问题的常见算法 Bellman-Ford 和 Dijkstra 算法。前者适用于一般情况(包括存在负权值的情况，但不存在从源点可达的负权值回路)，后者仅适用于均为非负权值边的情况..
+              </p>
+            </div>
+          </a>
+
+        </div>
+
+        <hr>
+
+
+
+        <div class="post-preview " style="background-image: url('/images/title_img/graph.jpg')">
+          <a href="/2018/03/01/graph-spanning-tree/">
+            <h2 class="post-title">
+              图论 (三)：最小生成树算法
+            </h2>
+            <p class="post-meta">
+              <i class="fa fa-calendar" aria-hidden="true"></i> 2018-03-01
+            </p>
+
+            <h3 class="post-subtitle">
+              Prim's & Kruskal's Algorithm
+            </h3>
+
+            <div class="post-content-preview">
+              <p>
+                前提：带权无向图
+                这里讨论的两种最小生成树算法 Prim 算法和 Kruskal 算法都是贪心算法。
+                贪心算法的每一步必须在多个可能的选择中选择一种，贪心算法推荐选择在当前看来最好的选择。这种策略一般并不能保证找到一个全局最优的解决方案。但是对于最小生成树问题来说，可以证明确实能找到权重最小的生..
+              </p>
+            </div>
+          </a>
+
+        </div>
+
+        <hr>
+
+
+
+        <div class="post-preview " style="background-image: url('/images/title_img/graph.jpg')">
+          <a href="/2018/03/01/graph-traversal/">
+            <h2 class="post-title">
+              图论 (二)：图的遍历
+            </h2>
+            <p class="post-meta">
+              <i class="fa fa-calendar" aria-hidden="true"></i> 2018-03-01
+            </p>
+
+            <h3 class="post-subtitle">
+              深度优先 & 广度优先
+            </h3>
+
+            <div class="post-content-preview">
+              <p>
+                图的遍历（Graph Transversal）类似于树的遍历（事实上，树可以看成是图的一个特例），也分为深度优先和广度优先。
+                深度优先遍历
+                深度优先算法尽可能“深”地搜索一个图。对于某个节点 v，如果它有未搜索的边，则沿着这条边继续搜索下去，直到该路径无法发现新的节点，回溯回节点 v，继续搜索它..
+              </p>
+            </div>
+          </a>
+
+        </div>
+
+        <hr>
+
+
+
+        <div class="post-preview " style="background-image: url('/images/title_img/graph.jpg')">
+          <a href="/2018/03/01/graph-theory/">
+            <h2 class="post-title">
+              图论 (一)：图论基础
+            </h2>
+            <p class="post-meta">
+              <i class="fa fa-calendar" aria-hidden="true"></i> 2018-03-01
+            </p>
+
+            <h3 class="post-subtitle">
+              graph-theory
+            </h3>
+
+            <div class="post-content-preview">
+              <p>
+                图的概念
+                点边
+                图的分类
+                有向图 vs 无向图
+                无权图 vs 有权图
+                图的连通性
+                简单图（Simple Graph）
+                没有平行边和自环边的图
+                图的表示
+
+                邻接表适合表示稀疏图，邻接矩阵适合表示稠密图。
+
+                邻接矩阵（Adjacency Matrix）
+                用邻接矩阵表示无向图：
+                用邻接矩阵表示有向..
+              </p>
+            </div>
+          </a>
+
+        </div>
+
+        <hr>
+
+
+
+
+        <!-- 翻页 pager -->
+
+        <ul class="pager">
+
+
+          <li class="next">
+            <a href="/page/2/">Older Posts &rarr;</a>
+          </li>
+
+        </ul>
+      </div>
+      <!-- Sidebar Container -->
+      <div class="
+                col-lg-3 col-lg-offset-0
+                col-md-3 col-md-offset-0
+                col-sm-12
+                col-xs-12
+                sidebar-container
+            ">
+
+        <!-- About Me -->
+        <section class="visible-md visible-lg" style="padding: 0 18px">
+          <div class="short-about">
+            <!--侧边栏头像-->
+
+            <img src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg">
+
+            <h5><a href="/about/">Hayden Wang</a></h5>
+
+            <p>汲汲骎骎，月异日新</p>
+
+            <hr>
+            <!-- SNS Link 社交 -->
+            <ul class="list-inline">
+
+
+
+
+
+              <li>
+                <a target="_blank" href="http://weibo.com/1757057895">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+
+
+
+              <li>
+                <a target="_blank" href="https://www.facebook.com/100005656009098">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+
+
+
+              <li>
+                <a target="_blank" href="https://github.com/wanghdnku">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+
+
+
+            </ul>
+          </div>
+        </section>
+
+        <!-- Featured Tags  标签 -->
+
+        <section>
+          <div class="tags">
+
+
+            <a href="/tags/#Networks" title="Networks" rel="6">Networks</a>
+
+
+
+            <a href="/tags/#Algorithm" title="Algorithm" rel="16">Algorithm</a>
+
+
+
+            <a href="/tags/#Computer Science" title="Computer Science" rel="3">Computer Science</a>
+
+
+
+            <a href="/tags/#Objective-C" title="Objective-C" rel="2">Objective-C</a>
+
+
+
+            <a href="/tags/#Cryptography" title="Cryptography" rel="3">Cryptography</a>
+
+
+
+            <a href="/tags/#Cheatsheet" title="Cheatsheet" rel="2">Cheatsheet</a>
+
+
+
+            <a href="/tags/#Raspberry Pi" title="Raspberry Pi" rel="3">Raspberry Pi</a>
+
+
+          </div>
+        </section>
+
+
+
+
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

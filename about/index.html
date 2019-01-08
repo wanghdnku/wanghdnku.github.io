@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    ABOUT｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/about/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="false" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <style>
+    #about-header {
+    margin-top: 85px;
+  }
+
+  #about-header img {
+    width: 145px;
+  }
+
+  .offer-body,
+  .person-body,
+  .project-body,
+  .skills-body,
+  .work-body,
+  .learn-body {
+    padding-left: 25px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  .body-section {
+    padding-left: 15px;
+  }
+
+  #offer ul {
+    margin-left: 20px;
+    margin-bottom: 5px !important;
+    border-left: 4px darkgray solid;
+    padding-left: 8px;
+
+  }
+
+  li {
+    list-style: none;
+    font-size: 15px;
+
+  }
+
+  .title {
+    color: #777;
+  }
+
+  .title>span {
+    margin-right: 5px
+  }
+
+  .detail-info-xueli {
+    display: block;
+    padding-left: 70px;
+  }
+</style>
+
+  <!-- Chinese Version -->
+  <div class="zh post-container">
+    < <div class="content" id="about-header">
+      <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
+          <div>
+            <img src="http://p3v455jfd.bkt.clouddn.com/idphoto.jpg" style="border-radius: 50%;">
+          </div>
+          <div class="text-center">
+            <h2>王海栋</h2>
+            <p>iOS 开发工程师</p>
+          </div>
+        </div>
+      </div>
+      <!--正文-->
+      <div class="row" id="offer">
+        <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
+          <div class="education-background">
+            <h3 class="title"><span class="glyphicon glyphicon-education"></span> 教育经历</h3>
+            <p class="body-section"><b>墨尔本大学 2015.03 - 2017.02</b></p>
+            <div class="body-section">
+              <ul>
+                <li>信息技术硕士，分布式计算方向</li>
+                <li>墨尔本大学优秀毕业设计（First Class Honours）</li>
+              </ul>
+            </div>
+            <p class="body-section"><b>南开大学 2010.09 - 2014.06</b></p>
+            <div class="body-section">
+              <ul>
+                <li>工程学士，计算机科学与技术</li>
+                <li>南开大学计控学院优秀毕业论文（96/100）</li>
+                <li>南开大学团委优秀学生干部、南开大学信息学院优秀学生干部</li>
+              </ul>
+            </div>
+          </div>
+          <div class="work-experience">
+            <h3 class="title"><span class="glyphicon glyphicon-briefcase"></span> 工作经历</h3>
+            <p class="body-section"><b>野狗科技（北京）有限公司 2017.05 - NOW</b></p>
+            <div class="body-section">
+              <ul>
+                <li>岗位：iOS 开发工程师</li>
+                <li>描述：野狗科技为开发者提供实时后端云服务。本人在野狗科技任职期间，先后负责iOS实时位置同步SDK的开发，和音视频（包括一对一视频通话和多人视频会议）SDK的开发。</li>
+              </ul>
+            </div>
+            <p class="body-section"><b>澳大利亚 AURIN 研究所 2016.03 - 2016.12</b></p>
+            <div class="body-section">
+              <ul>
+                <li>岗位：地理信息数据处理 & iOS 客户端开发</li>
+                <li>描述：AURIN (Australia Urban Research Infrastructure Network) 致力于整合各个研究机构提供的地理信息数据，建立公用的基础设施并对外提供服务。本人在AURIN实习期间，从事数据处理与iOS客户端开发工作。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="project-show">
+            <h3 class="title"><span class="glyphicon glyphicon-folder-open"></span> 项目经验</h3>
+            <p class="body-section"><b>WilddogVideo SDK，2016.06 - 2017.02</b></p>
+            <div class="body-section">
+              <ul>
+                <li>主要责任：WilddogVideo iOS SDK 开发</li>
+                <li>使用技术：WebRTC, ICE打洞, Objective-C, CocoaPods, Fastlane</li>
+                <li>项目简介：WilddogVideo SDK基于Google开源的WebRTC技术，使用户在不经过媒体服务器的情况下，建立起点对点的连接。本人在开发音视频SDK的过程中，研究了ICE(Interactive Connectivity Establishment)，了解通过STUN和TURN服务器的配合来打通NAT的过程，并在实际项目中应用。开发的音视频SDK能在不同的网络环境下快速建立连接，并在切换网络时自动重连，根据接入网络来选择打洞服务器等，能够适应纯IPv6的网络环境。多人视频通话能够稳定支持6人的视频会议，维持合理的CPU和内存占用。</li>
+                <li>项目链接：<a target="_blank" href="http://video.wilddogapp.com/">http://video.wilddogapp.com/ </a></li>
+              </ul>
+            </div>
+            <p class="body-section"><b>AURIN Mobile，iOS地图信息应用 2016.03 - 2016.12</b></p>
+            <div class="body-section">
+              <ul>
+                <li>主要责任：iOS开发，UI设计，性能优化</li>
+                <li>使用技术：GeoServer, Google Maps, Swift, Node.js</li>
+                <li>项目简介：AURIN是澳大利亚城市研究设施开放系统。该应用通过WFS和CSW向GeoServer请求数据，可视化地显示在地图以及图表上，并能够对比分析不同数据间的关联。本人在完成基本开发工作后，提出了一套性能优化方案。使用Node.js搭设中间服务器，结合Douglas-Peucker算法和Visvalingam-Whyatt算法对地图数据进行简化，最终达到以极少细节损失简化85%地图数据的目标。iOS应用于2016年8月在International Workshop on Science Gateway被用作展示项目。</li>
+                <li>项目链接：<a target="_blank" href="https://aurin.org.au/aurin-portal/">https://aurin.org.au/aurin-portal/ </a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="person-info">
+            <h3 class="title"><span class="glyphicon glyphicon-user"></span> 其他</h3>
+            <div class="person-body">
+              <p>个人博客: <a target="_blank" href="http://blog.hayden.fun"> http://blog.hayden.fun <span class="glyphicon glyphicon-link"></span> </a></p>
+              <p>GitHub: <a target="_blank" href="http://github.com/wanghdnku"> http://github.com/wanghdnku <span class="glyphicon glyphicon-link"></span></a></p>
+              <p>爱好: 摄影、健身、户外运动、树莓派、乐高</p>
+            </div>
+          </div>
+          <!-- <div>
+                    <h3 class="title"><span class="glyphicon glyphicon-bookmark"></span> 正在学习</h3>
+                    <ul>
+                        <li>xxxxx</li>
+                        <li>xxxxx</li>
+                        <li>xxxxx</li>
+                    </ul>
+                </div> -->
+          <div class="contact-show">
+            <h3 class="title "> <span class="glyphicon glyphicon-earphone"></span> 联系我</h3>
+            <div class="person-body">
+              <p>微信: Mr-Scorpio
+              </p>
+              <p>电话: 182-0377-0001</p>
+              <p>邮箱: wanghd.nku@gmail.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  </div>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

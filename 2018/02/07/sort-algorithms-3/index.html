@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    排序 (三)：基于交换的排序算法｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/2018/02/07/sort-algorithms-3/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../../../../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../../../../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="true" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <!--only post-->
+
+
+  <img class="wechat-title-img" src="/images/title_img/algorithms.jpg">
+
+
+  <style>
+    header.intro-header {
+    background-image: url('/images/title_img/algorithms.jpg?imageView2/1/w/1400/h/400/interlace/1/q/90')
+  }
+</style>
+
+  <header class="intro-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <div class="post-heading">
+            <h1>排序 (三)：基于交换的排序算法</h1>
+
+            <h2 class="subheading">冒泡排序 &amp; 快速排序</h2>
+
+            <span class="meta">
+              作者 Hayden Wang
+              <span>
+                日期 2018-02-07
+              </span>
+            </span>
+            <div class="tags text-center">
+
+              <a class="tag" href="/tags/#Algorithm" title="Algorithm">Algorithm</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-title-haojen">
+      <span>
+        排序 (三)：基于交换的排序算法
+      </span>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <!-- Post Container -->
+        <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+          <h2 id="1-冒泡排序"><a href="#1-冒泡排序" class="headerlink" title="1. 冒泡排序"></a>1. 冒泡排序</h2>
+          <p>思路：重复地走访过要排序的数列，一次比较两个元素，如果他们的顺序错误就把他们交换过来。走访数列的工作是重复地进行直到没有再需要交换，也就是说该数列已经排序完成。</p>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bubble_sort</span><span class="params">(a, n)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, n):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">1</span>, n):</span><br><span class="line">            <span class="keyword">if</span> a[j] &lt; a[i]:</span><br><span class="line">                swap(a[j], a[i])</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <hr>
+          <p><br></p>
+          <h2 id="2-快速排序"><a href="#2-快速排序" class="headerlink" title="2. 快速排序"></a>2. 快速排序</h2>
+          <h3 id="2-1-基础快速排序"><a href="#2-1-基础快速排序" class="headerlink" title="2.1 基础快速排序"></a>2.1 基础快速排序</h3>
+          <p><img src="/images/sort/quick_sort_1way.png" alt="基础快速排序"><br><img src="/images/sort/quick_sort_1way_end.png" alt="基础快速排序"></p>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quick_sort</span><span class="params">(arr, l, r)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> l &gt;= r:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    pivot = partition(arr, l, r)</span><br><span class="line">    quick_sort(arr, <span class="number">0</span>, pivot<span class="number">-1</span>)</span><br><span class="line">    quick_sort(arr, pivot+<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment"># 对 arr[l...r] 部分进行 partition 操作</span></span><br><span class="line"><span class="comment"># 返回p，使得 arr[l...p-1] &lt; arr[p], arr[p+1...r] &gt; arr[p]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partition</span><span class="params">(arr, l, r)</span>:</span></span><br><span class="line">    pivot = arr[l]</span><br><span class="line">    <span class="comment"># arr[l+1...j] &lt; pivot, arr[j+1...i] &gt; pivot</span></span><br><span class="line">    j = l</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(l+<span class="number">1</span>, r):</span><br><span class="line">        <span class="keyword">if</span> arr[i] &lt; pivot:</span><br><span class="line">            swap(arr[i], arr[j+<span class="number">1</span>])</span><br><span class="line">            j += <span class="number">1</span></span><br><span class="line">    swap(arr[l], arr[j])</span><br><span class="line">    <span class="keyword">return</span> j</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="2-2-双路快速排序"><a href="#2-2-双路快速排序" class="headerlink" title="2.2 双路快速排序"></a>2.2 双路快速排序</h3>
+          <p>存在问题：面临大量重复元素的情况下，退化成 $O(n^2)$ 的算法。<br>解决方法：把等于pivot的元素分布于两侧，解决重复元素过多时算法退化的问题</p>
+          <p><img src="/images/sort/quick_sort_2way.png" alt="基础快速排序"><br><img src="/images/sort/quick_sort_2way_end.png" alt="基础快速排序"></p>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partition</span><span class="params">(arr, l, r)</span>:</span></span><br><span class="line">    pivot = arr[l]</span><br><span class="line">    i, j = l+<span class="number">1</span>, r</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        <span class="keyword">while</span> arr[i] &lt; pivot:</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">        <span class="keyword">while</span> arr[j] &gt; pivot:</span><br><span class="line">            j -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> i &gt; j:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        swap(arr[i], a[j])</span><br><span class="line">        i += <span class="number">1</span></span><br><span class="line">        j -= <span class="number">1</span></span><br><span class="line">    swap(a[l], arr[j])</span><br><span class="line">    <span class="keyword">return</span> j</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="2-3-三路快速排序"><a href="#2-3-三路快速排序" class="headerlink" title="2.3 三路快速排序"></a>2.3 三路快速排序</h3>
+          <p>对双路快拍的再次优化，不分成两部分，而是分成三部分：e &lt; pivot, e = pivot, e &gt; pivot</p>
+          <p><img src="/images/sort/quick_sort_3way.png" alt="基础快速排序"><br><img src="/images/sort/quick_sort_3way_end.png" alt="基础快速排序"></p>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quick_sort</span><span class="params">(arr, l, r)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> l &gt;= r:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    lt, rt = partition(a, l, r)</span><br><span class="line">    quick_sort(l, lt)</span><br><span class="line">    quick_sort(gt, r)</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partition</span><span class="params">(a, l, r)</span>:</span></span><br><span class="line">    p = a[l]</span><br><span class="line">    lt, i, gt = l+<span class="number">1</span>, l, r+<span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> i &lt; gt:</span><br><span class="line">        <span class="keyword">if</span> arr[i] &lt; v:</span><br><span class="line">            swap(a[i], a[lt+<span class="number">1</span>])</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">            lt += <span class="number">1</span></span><br><span class="line">        <span class="keyword">elif</span> arr[i] &gt; v:</span><br><span class="line">            swap(a[i], a[gt<span class="number">-1</span>])</span><br><span class="line">            gt -= <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            i += <span class="number">1</span></span><br><span class="line">    swap(a[l], a[lt])</span><br><span class="line">    lt -= <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> (lt, gt)</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="2-4-函数式写法（Haskell）"><a href="#2-4-函数式写法（Haskell）" class="headerlink" title="2.4 函数式写法（Haskell）"></a>2.4 函数式写法（Haskell）</h3>
+          <figure class="highlight haskell">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="title">qsort</span> :: (<span class="type">Ord</span> a) =&gt; [a] -&gt; [a]</span><br><span class="line"><span class="title">qsort</span> [] = []</span><br><span class="line"><span class="title">qsort</span> (x:xs) = qsort left + [x] + qsort right</span><br><span class="line">               <span class="keyword">where</span> left = [a | a &lt;- xs, a &lt;= x]</span><br><span class="line">                     right = [a | a &lt;- xs, a &gt; x]</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="2-5-快速排序及其优化"><a href="#2-5-快速排序及其优化" class="headerlink" title="2.5 快速排序及其优化"></a>2.5 快速排序及其优化</h3>
+          <p>首先是简单的快速排序算法，与上面的实现不一样，为了简单易读，这里采用类似于 Haskell 的写法：</p>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partition</span><span class="params">(arr)</span>:</span></span><br><span class="line">    pi, arr = arr[<span class="number">0</span>], arr[<span class="number">1</span>:]</span><br><span class="line">    lo = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x &lt;= pi]</span><br><span class="line">    hi = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x &gt; pi]</span><br><span class="line">    <span class="keyword">return</span> lo, pi, hi</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quick_sort</span><span class="params">(arr)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(arr) &lt;= <span class="number">1</span>: </span><br><span class="line">        <span class="keyword">return</span> arr</span><br><span class="line">    lo, pi, hi = partition(arr)</span><br><span class="line">    <span class="keyword">return</span> quick_sort(lo) + [pi] + quick_sort(hi)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 此方法当数组过大，尤其是近乎有序时会发生 "maximum recursion depth exceeded"</span></span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>下面我们来优化快速排序：</p>
+          <ul>
+            <li>优化思路1: 当元素少的时候，使用插入排序优化</li>
+            <li>优化思路2: 对于近乎有序的数组，分出来的子数组太偏，退化成O(n^2)，随机选择数作为pivot，杜绝有序数组的影响</li>
+            <li>优化思路3-1: 对于有很多重复元素的数组，再次造成极度不平衡的状态，把等于pivot的元素平均分散到左右两侧</li>
+            <li>优化思路3-2: 三路快速排序，等于pivot的元素单独拿出来，不参加递归</li>
+          </ul>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">partition_opt</span><span class="params">(arr)</span>:</span></span><br><span class="line">    <span class="comment"># 1. 选取随机的数值作为pivot</span></span><br><span class="line">    pi = arr[randint(<span class="number">0</span>, len(arr))<span class="number">-1</span>]</span><br><span class="line">    <span class="comment"># 2. 利用三路快排序</span></span><br><span class="line">    left = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x &lt; pi]</span><br><span class="line">    pivot = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x == pi]</span><br><span class="line">    right = [x <span class="keyword">for</span> x <span class="keyword">in</span> arr <span class="keyword">if</span> x &gt; pi]</span><br><span class="line">    <span class="keyword">return</span> left, pivot, right</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">quick_sort_opt</span><span class="params">(arr)</span>:</span></span><br><span class="line">    <span class="comment"># 3. 规模较小时，使用插入排序</span></span><br><span class="line">    <span class="keyword">if</span> len(arr) &lt;= <span class="number">15</span>:</span><br><span class="line">        insertion_sort_opt(arr, len(arr))</span><br><span class="line">        <span class="keyword">return</span> arr</span><br><span class="line">    left, pivot, right = partition_opt(arr)</span><br><span class="line">    <span class="keyword">return</span> quick_sort_opt(left) + pivot + quick_sort_opt(right)</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <hr>
+
+
+          <ul class="pager">
+
+            <li class="previous">
+              <a href="/2018/02/07/sort-algorithms-4/" data-toggle="tooltip" data-placement="top" title="排序 (四)：归并排序算法">&larr; Previous Post</a>
+            </li>
+
+
+            <li class="next">
+              <a href="/2018/02/07/sort-algorithms-2/" data-toggle="tooltip" data-placement="top" title="排序 (二)：基于选择的排序算法">Next Post &rarr;</a>
+            </li>
+
+          </ul>
+
+
+
+
+
+
+          <!--加入新的评论系统-->
+
+        </div>
+
+        <div class="hidden-xs col-sm-3 toc-col">
+          <div class="toc-wrap">
+            <ol class="toc">
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#1-冒泡排序"><span class="toc-text">1. 冒泡排序</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#2-快速排序"><span class="toc-text">2. 快速排序</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-基础快速排序"><span class="toc-text">2.1 基础快速排序</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-双路快速排序"><span class="toc-text">2.2 双路快速排序</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-三路快速排序"><span class="toc-text">2.3 三路快速排序</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-函数式写法（Haskell）"><span class="toc-text">2.4 函数式写法（Haskell）</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-5-快速排序及其优化"><span class="toc-text">2.5 快速排序及其优化</span></a></li>
+                </ol>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Sidebar Container -->
+
+        <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+          <!-- Featured Tags -->
+
+          <section>
+            <!-- no hr -->
+            <h5 class="text-center">
+              <a href="/tags/">FEATURED TAGS</a>
+            </h5>
+            <div class="tags">
+
+              <a class="tag" href="/tags/#Algorithm" title="Algorithm">Algorithm</a>
+
+            </div>
+          </section>
+
+
+          <!-- Friends Blog -->
+
+        </div>
+      </div>
+
+    </div>
+  </article>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../../../../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../../../../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../../../../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

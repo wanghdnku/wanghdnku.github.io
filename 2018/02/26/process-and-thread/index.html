@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    进程与线程｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/2018/02/26/process-and-thread/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../../../../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../../../../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="true" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <!--only post-->
+
+
+  <img class="wechat-title-img" src="/images/title_img/cpu.jpg">
+
+
+  <style>
+    header.intro-header {
+    background-image: url('/images/title_img/cpu.jpg?imageView2/1/w/1400/h/400/interlace/1/q/90')
+  }
+</style>
+
+  <header class="intro-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <div class="post-heading">
+            <h1>进程与线程</h1>
+
+            <h2 class="subheading">Process and Thread</h2>
+
+            <span class="meta">
+              作者 Hayden Wang
+              <span>
+                日期 2018-02-26
+              </span>
+            </span>
+            <div class="tags text-center">
+
+              <a class="tag" href="/tags/#Computer Science" title="Computer Science">Computer Science</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-title-haojen">
+      <span>
+        进程与线程
+      </span>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <!-- Post Container -->
+        <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+          <h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2>
+          <ol>
+            <li>线程和进程的状态都有运行，就绪，阻塞状态</li>
+            <li>进程有自己独立的内存地址空间，而线程共享进程的内存地址空间</li>
+            <li>进程是组织资源的最小单位，而线程是安排CPU执行的最小单位</li>
+          </ol>
+          <h2 id="进程与线程的对比"><a href="#进程与线程的对比" class="headerlink" title="进程与线程的对比"></a>进程与线程的对比</h2>
+          <h3 id="1-解构进程与线程"><a href="#1-解构进程与线程" class="headerlink" title="1. 解构进程与线程"></a>1. 解构进程与线程</h3>
+          <p>进程包含了线程、逻辑内存、文件/网络句柄。<br>线程包含了栈、PC（Program Control）指针：当前指令的内存地址、TLS（Thread Local Storage）：线程的独立内存</p>
+          <p>进程只是一个容器，线程才是真正运行的。</p>
+          <blockquote>
+            <p>进程是具有一定独立功能的程序关于有个数据集合上的一次运行活动，是系统进行资源分配和调度的一个独立单元。</p>
+          </blockquote>
+          <p>
+
+            <blockquote>
+              <p>线程是进程的一个实体，是 CPU 调度和分派的基本单元，是比进程更小的能独立运行的基本单元。本身基本上不拥有系统资源，只用有一点在运行中必不可少的资源（如程序计数器，一组寄存器和栈）。一个线程可以创建和撤销另一个线程，同一个进程中的多个线程之间可以并发执行。</p>
+            </blockquote>
+          </p>
+          <p>线程和进程有很多相似之处，比如线程和进程的状态都有运行，就绪，阻塞状态。这几种状态理解起来非常简单，当进程所需的资源没有到位时会是阻塞状态，当进程所需的资源到位时但CPU没有到位时是就绪状态，当进程既有所需的资源，又有CPU时，就为运行状态。<br>进程有自己独立的内存地址空间，而线程共享进程的内存地址空间。<br><strong>进程是组织资源的最小单位，而线程是安排CPU执行的最小单位</strong>。</p>
+          <h3 id="2-引入线程的好处"><a href="#2-引入线程的好处" class="headerlink" title="2. 引入线程的好处"></a>2. 引入线程的好处</h3>
+          <p>1.易于调度 2.提高并发性 3.开销小 4.发挥多核CPU性能</p>
+          <p>线程的好处如下:</p>
+          <ol>
+            <li>在很多程序中，需要多个线程互相同步或互斥的并行完成工作，而将这些工作分解到不同的线程中去无疑简化了编程模型。</li>
+            <li>因为线程相比进程来说，更加的轻量，所以线程的创建和销毁的代价变得更小。</li>
+            <li>线程提高了性能，虽然线程宏观上是并行的，但微观上却是串行。从CPU角度线程并无法提升性能，但如果某些线程涉及到等待资源（比如IO，等待输入）时，多线程允许进程中的其它线程继续执行而不是整个进程被阻塞，因此提高了CPU的利用率，从这个角度会提升性能。</li>
+            <li>在多CPU或多核的情况下，使用线程不仅仅在宏观上并行，在微观上也是并行的。</li>
+          </ol>
+          <h3 id="3-进程与线程的区别"><a href="#3-进程与线程的区别" class="headerlink" title="3. 进程与线程的区别"></a>3. 进程与线程的区别</h3>
+          <p>进程(process)与线程(thread)最大的区别是: <strong>进程拥有自己的地址空间</strong>，某进程内的线程对于其他进程不可见，即进程 A 不能通过传地址的方式直接读写进程 B 的存储区域。进程之间的通信需要通过进程间通信(Inter-Process Communication，IPC)。与之相对的，同一进程的各线程间之间可以直接通过传递地址或全局变量的方式传递信息。</p>
+          <p>此外，<strong>进程作为操作系统中拥有资源和独立调度的基本单位，可以拥有多个线程</strong>。通常操作系统中运行的一个程序就对应一个进程。在同一进程中，线程的切换不会引起进程切换。在不同进程中进行线程切换，如从一个进程内的线程切换到另一个进程中的线程时，会引起进程切换。相比进程切换，线程切换的开销要小很多。线程于进程相互结合能够提高系统的运行效率。</p>
+          <hr>
+          <p><br></p>
+          <h2 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h2>
+          <h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3>
+          <p>一个进程不能直接读写另一个进程的数据，两者之间的通信需要通过进程间通信进行。进程通信的方式通常遵<strong>从生产者消费者模型</strong>，需要实现数据交换和同步两大功能。</p>
+          <p>共享内存（Shared-Memory）+ Semaphore：不同进程通过读写操作系统中特殊的共享内存进行数据交换，进程之间用semaphore同步。<br>信息传递（Message Passing）：进程在操作系统内部注册一个窗口，并且检测有没有数据，其他进程直接读写数据到该窗口。</p>
+          <ol>
+            <li>文件 (File)：读写同一个文件。</li>
+            <li>信号 (Signal)：一个进程给另一个进程发的信号，是个数字，用于控制。例如用 <code>kill -2 58249</code> 中断58249进程。除用于进程间通信外，进程还可以给自己发信号。</li>
+            <li>管道 (Pipe) / 命名管道 (Named Pipe)：管道可用于具有亲缘关系的进程间通信。命名管道还允许无亲缘关系的进程间通信。例如用 <code>|</code> 串连起Linux的命令</li>
+            <li>消息队列 (Message)：消息队列是消息的链表。有足够权限的进程可以写消息，有读权限的进程可以读消息。消息队列克服了信号承载信息量少，管道只能承载无格式字节流以及缓冲区大小受限等缺点</li>
+            <li>共享内存 (Shared Memory)：多个进程访问同一块内存空间，是最快的可用IPC形式。针对其他通信机制效率低设计的，往往与信号量结合，用来达到进程间同步和互斥。</li>
+            <li>信号量 (Semaphore)：进程间及统一进程不同线程间的同步手段。</li>
+            <li>套接字 (Socket)：通过网络，可进行不同机器的进程间通信。</li>
+          </ol>
+          <h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3>
+          <p>对于单核单线程 CPU 而言，在某一时刻只能执行一条 CPU 指令。<strong>上下文切换(Context Switch)</strong>是一种将CPU资源从一个进程分配给另一个进程的机制。从用户角度看，计算机能够并行运行多个进程，这恰恰是操作系统通过快速上下文切换造成的结果。在切换的过程中，操作系统需要先存储当前进程的状态(包括内存空间的指针，当前执行完的指令等等)，再读入下一个进程的状态，然后执行此进程。</p>
+          <h3 id="生产者消费者模型"><a href="#生产者消费者模型" class="headerlink" title="生产者消费者模型"></a>生产者消费者模型</h3>
+          <p>生产者消费者模型是一种常见的通信模型:生产者和消费者共享一个数据管道，生产者将数据写入 buffer，消费者从另一头读取数据。对于数据管道，需要考虑为空和溢出的情况。同时，通常还需要将这部分共享内存用 mutex 加锁。在只有一个生产者一个消费者的情况下，可以设计无锁队列(lockless queue)，线程安全地直接读写数据。</p>
+          <h3 id="调度算法"><a href="#调度算法" class="headerlink" title="调度算法"></a>调度算法</h3>
+          <ul>
+            <li>先来先服务算法 FCFS</li>
+            <li>短作业优先算法 SJF</li>
+            <li>优先级调度算法</li>
+            <li>高响应比优先算法</li>
+            <li>时间片轮转算法</li>
+            <li>多级反馈队列调度算法</li>
+          </ul>
+          <hr>
+          <p><br></p>
+          <h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2>
+          <h3 id="线程间同步"><a href="#线程间同步" class="headerlink" title="线程间同步"></a>线程间同步</h3>
+          <ol>
+            <li>临界区：通过对多线程的串行化来访问公共资源或一段代码，速度快，适合控制数据访问。</li>
+            <li>互斥量：为协调对一个共享资源的单独访问而设计，只有拥有互斥量的线程才有权限访问。</li>
+            <li>信号量：为控制一个具有有限数量的用户资源而设计，限制同一时刻访问资源的最大线程数目。</li>
+            <li>事件：用来通知线程某事件已发生，从而启动后续任务。</li>
+          </ol>
+          <h3 id="线程的分类"><a href="#线程的分类" class="headerlink" title="线程的分类"></a>线程的分类</h3>
+          <p>线程可以分为两类：</p>
+          <ol>
+            <li>用户级线程（User Level Thread）：对于这类线程，有关线程管理的所有工作都由应用程序完成，内核意识不到线程的存在。在应用程序启动后，操作系统分配给该程序一个进程号，以及其对应的内存空间等资源。应用程序通常先在一个线程中运行，该线程称为主线程。在其运行的某个时刻，可以通过调用线程库中的函数创建一个在相同进程中运行的新线程。用户级线程的好处是非常高效，不需要进入内核空间，但并发效率不高。</li>
+            <li>内核级线程（Kernel Level Thread）：对于这类线程，有关线程管理的所有工作由内核完成，应用程序没有进行线程管理的代码，只能调用内核线程的接口。内核维护进程及其内部的每个线程，调度也由内核基于线程架构完成。内核级线程的好处是，内核可以将不同线程更好地分配到不同的CPU，以 实现真正的并行计算。</li>
+          </ol>
+          <p>用户线程的优点：</p>
+          <ol>
+            <li>可以在不支持线程的操作系统中实现；</li>
+            <li>创建、销毁、切换的代价比内核线程小得多；</li>
+            <li>线程管理灵活，允许每个进程制定自己的调度算法；</li>
+            <li>能利用的表空间和堆栈空间比内核线程多。</li>
+          </ol>
+          <p>用户线程的缺点：</p>
+          <ol>
+            <li>统一进程中只能同时有一个线程运行，如果一个线程使用了系统调用而阻塞，整个进程都会被挂起；</li>
+            <li>页面失效也会导致整个进程被挂起。</li>
+          </ol>
+          <blockquote>
+            <p>内核线程的优缺点刚好和用户线程相反。事实上，在现代操作系统中，往往使用组合方式实现多线程：即线程创建完全在用户空间中完成，并且一个应用程序中的多个用户级线程被映射到一些内核级线程上，相当于是一种折中方案。</p>
+          </blockquote>
+          <h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3>
+          <p>为了解决创建线程开销大（相对进程来说）的问题，引入了线程池的概念。</p>
+          <blockquote>
+            <p>线程池：预先建立好线程，等待任务派发。</p>
+          </blockquote>
+          <p>包括两样东西：</p>
+          <ol>
+            <li>预先创建好的线程</li>
+            <li>派发队列（Blocking Queue）</li>
+          </ol>
+          <p>Java中线程池的参数：</p>
+          <ul>
+            <li>corePoolSize：线程池中初始线程数量，可能处于等待状态</li>
+            <li>maximumPoolSize：线程池中最大允许线程数量</li>
+            <li>keepAliveTime：超出corePoolSize部分线程如果等待这些时间将被回收</li>
+          </ul>
+          <hr>
+          <p><br></p>
+          <h2 id="锁与死锁"><a href="#锁与死锁" class="headerlink" title="锁与死锁"></a>锁与死锁</h2>
+          <h3 id="Semaphore-Mutex"><a href="#Semaphore-Mutex" class="headerlink" title="Semaphore / Mutex"></a>Semaphore / Mutex</h3>
+          <p>当用户创立多个线程/进程时，如果不同线程/进程同时读写相同的内容，则 可能造成读写错误，或者数据不一致。此时，需要通过加锁的方式，控制核心区域(critical section)的访问权限。对于semaphore而言，在初始化变量的时候可以控制允许多少个线程/进程同时访问一个核心区域，其他的线程/进程会被堵塞，直到有人解锁。Mutex 相当于只允许一个线程/进程访问的 semaphore。</p>
+          <p>此外，根据实际需要，人们还实现了一种读写锁(read-write lock)，它允许同时存在多个读取者(reader)，但任何时候至多只有一个写入者(writer)，且不能与读取者共存。</p>
+          <h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3>
+          <p>在引入锁的同时，我们遇到了一个新的问题:死锁(Deadlock)。</p>
+          <blockquote>
+            <p>死锁是指两个或多个线程/进程之间相互阻塞，以至于任何一个都不能继续运行，因此也不能解锁其他线程/进程。</p>
+          </blockquote>
+          <p>所以说<strong>死锁实际上就是多个进程因为争夺资源而造成的一种僵局</strong>，若无外力作用，这些进程都无法向前推进。例如，线程 A 占有 lock A，并且尝试获取 lock B; 而线程 2 占有 lock B，尝试获取 lock A。此时，两者相互阻塞，都无法继续运行。</p>
+          <p><strong>产生死锁的必须同时满足四个条件</strong>，任意一个不成立，死锁就不会发生: </p>
+          <ol>
+            <li>互斥条件 Mutual Exclusion – Only one process may use a resource at a time </li>
+            <li>请求和保持条件 Hold-and-Wait – Process holds resource while waiting for another </li>
+            <li>不剥夺条件 No Preemption – Can’t take a resource away from a process</li>
+            <li>循环等待条件 Circular Wait – The waiting processes form a cycle</li>
+          </ol>
+          <p><strong>死锁处理策略</strong>：</p>
+          <ol>
+            <li>预防死锁：设置某些限制条件，破坏四个条件中的一个或几个。</li>
+            <li>避免思索：在资源的动态分配过程中，用某种方法纺织系统进入不安全状态。银行家算法是著名的死锁避免算法。</li>
+            <li>死锁的检测及破除：通过系统的检测机制检测出死锁，并破除。破除方法有：(1)资源剥夺法 (2)撤销进程法 (3)进程回退法。</li>
+          </ol>
+          <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2>
+          <ul>
+            <li>进程和线程的区别：<a href="https://jingyan.baidu.com/article/624e74598efcc834e9ba5a66.html" target="_blank" rel="noopener">https://jingyan.baidu.com/article/624e74598efcc834e9ba5a66.html</a></li>
+            <li>操作系统中的线程与进程：<a href="http://www.cnblogs.com/CareySon/archive/2012/05/04/ProcessAndThread.html" target="_blank" rel="noopener">http://www.cnblogs.com/CareySon/archive/2012/05/04/ProcessAndThread.html</a></li>
+          </ul>
+          <hr>
+
+
+          <ul class="pager">
+
+            <li class="previous">
+              <a href="/2018/02/26/about-memory/" data-toggle="tooltip" data-placement="top" title="内存那些事儿">&larr; Previous Post</a>
+            </li>
+
+
+            <li class="next">
+              <a href="/2018/02/22/raspberrypi-cookbook-3/" data-toggle="tooltip" data-placement="top" title="我的树莓派食谱（三）">Next Post &rarr;</a>
+            </li>
+
+          </ul>
+
+
+
+
+
+
+          <!--加入新的评论系统-->
+
+        </div>
+
+        <div class="hidden-xs col-sm-3 toc-col">
+          <div class="toc-wrap">
+            <ol class="toc">
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#摘要"><span class="toc-text">摘要</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#进程与线程的对比"><span class="toc-text">进程与线程的对比</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#1-解构进程与线程"><span class="toc-text">1. 解构进程与线程</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#2-引入线程的好处"><span class="toc-text">2. 引入线程的好处</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#3-进程与线程的区别"><span class="toc-text">3. 进程与线程的区别</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#进程"><span class="toc-text">进程</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#进程间通信"><span class="toc-text">进程间通信</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#上下文切换"><span class="toc-text">上下文切换</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#生产者消费者模型"><span class="toc-text">生产者消费者模型</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#调度算法"><span class="toc-text">调度算法</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#线程"><span class="toc-text">线程</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#线程间同步"><span class="toc-text">线程间同步</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#线程的分类"><span class="toc-text">线程的分类</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#线程池"><span class="toc-text">线程池</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#锁与死锁"><span class="toc-text">锁与死锁</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#Semaphore-Mutex"><span class="toc-text">Semaphore / Mutex</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#死锁"><span class="toc-text">死锁</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#References"><span class="toc-text">References</span></a></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Sidebar Container -->
+
+        <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+          <!-- Featured Tags -->
+
+          <section>
+            <!-- no hr -->
+            <h5 class="text-center">
+              <a href="/tags/">FEATURED TAGS</a>
+            </h5>
+            <div class="tags">
+
+              <a class="tag" href="/tags/#Computer Science" title="Computer Science">Computer Science</a>
+
+            </div>
+          </section>
+
+
+          <!-- Friends Blog -->
+
+        </div>
+      </div>
+
+    </div>
+  </article>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../../../../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../../../../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../../../../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Hayden的个人博客">
+  <meta name="keyword" content="">
+  <meta name="theme-color" content="#600090">
+  <meta name="msapplication-navbutton-color" content="#600090">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+  <link rel="shortcut icon" href="https://avatars3.githubusercontent.com/u/11764996?s=460&v=4">
+  <link rel="alternate" type="application/atom+xml" title="Hayden" href="/atom.xml">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+  <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+  <title>
+
+    关于位运算｜Hayden&#39;s Loft
+
+  </title>
+
+  <link rel="canonical" href="blog.hayden.fun/2018/02/20/bit-operation/">
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="../../../../css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../../../../css/blog-style.css">
+
+  <!-- Pygments Github CSS -->
+  <link rel="stylesheet" href="../../../../css/syntax.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<style>
+
+  header.intro-header {
+        background-image: url('http://ww1.sinaimg.cn/thumbnail/68ba9367ly1fo8dpfo3kmj22gj2gj4qp.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+
+<body ontouchstart="" class="animated fadeIn">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost="true" data-istags="false
+" data-ishome="false">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header page-scroll">
+        <button type="button" class="navbar-toggle">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand animated pulse" href="/">
+          <span class="brand-logo">
+            Hayden
+          </span>
+          's Blog
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+      <!-- /.navbar-collapse -->
+      <div id="huxblog_navbar">
+        <div class="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/">Home</a>
+            </li>
+
+
+
+
+            <li>
+              <a href="/about/">ABOUT</a>
+            </li>
+
+
+
+
+
+            <li>
+              <a href="/tags/">TAGS</a>
+            </li>
+
+
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.container -->
+  </nav>
+  <script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    //    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+
+    function handleMagic(e) {
+      if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+        $navbar.className = " ";
+        // wait until animation end.
+        setTimeout(function() {
+          // prevent frequently toggle
+          if ($navbar.className.indexOf('in') < 0) {
+            $collapse.style.height = "0px"
+          }
+        }, 400)
+      } else {
+        // OPEN
+        $collapse.style.height = "auto"
+        $navbar.className += " in";
+      }
+    }
+  </script>
+  <!-- Main Content -->
+  <!--only post-->
+
+
+  <img class="wechat-title-img" src="/images/title_img/logic_gate.jpg">
+
+
+  <style>
+    header.intro-header {
+    background-image: url('/images/title_img/logic_gate.jpg?imageView2/1/w/1400/h/400/interlace/1/q/90')
+  }
+</style>
+
+  <header class="intro-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <div class="post-heading">
+            <h1>关于位运算</h1>
+
+            <h2 class="subheading">如何高效地解决常见问题</h2>
+
+            <span class="meta">
+              作者 Hayden Wang
+              <span>
+                日期 2018-02-20
+              </span>
+            </span>
+            <div class="tags text-center">
+
+              <a class="tag" href="/tags/#Algorithm" title="Algorithm">Algorithm</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="post-title-haojen">
+      <span>
+        关于位运算
+      </span>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <!-- Post Container -->
+        <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+          <p>位运算，即按二进制进行的运算。</p>
+          <h2 id="1-位运算符"><a href="#1-位运算符" class="headerlink" title="1. 位运算符"></a>1. 位运算符</h2>
+          <p>C/C++中，基本的位运算操作符（优先级从高到低）：</p>
+          <table>
+            <thead>
+              <tr>
+                <th>操作符</th>
+                <th>功能</th>
+                <th>用法</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>~</code></td>
+                <td>取反</td>
+                <td><code>~a</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;&lt;</code></td>
+                <td>左移右侧补 0，相当于乘法</td>
+                <td><code>a&lt;&lt;1</code></td>
+              </tr>
+              <tr>
+                <td><code>&gt;&gt;</code></td>
+                <td>右移左侧补符号位，相当于除法</td>
+                <td><code>a&gt;&gt;1</code></td>
+              </tr>
+              <tr>
+                <td><code>&gt;&gt;&gt;</code></td>
+                <td>右移左侧补 0</td>
+                <td><code>a&gt;&gt;&gt;1</code></td>
+              </tr>
+              <tr>
+                <td><code>&amp;</code></td>
+                <td>按位与</td>
+                <td><code>a&amp;b</code></td>
+              </tr>
+              <tr>
+                <td><code>^</code></td>
+                <td>按位异或</td>
+                <td><code>a^b</code></td>
+              </tr>
+              <tr>
+                <td><code>⎪</code></td>
+                <td>按位或</td>
+                <td><code>a⎪b</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <blockquote>
+            <p>注意：不同的语言或者机器，对有符号数的移位操作表现可能不一致。</p>
+          </blockquote>
+          <h2 id="2-基本的位操作"><a href="#2-基本的位操作" class="headerlink" title="2. 基本的位操作"></a>2. 基本的位操作</h2>
+          <h3 id="获取位"><a href="#获取位" class="headerlink" title="获取位"></a>获取位</h3>
+          <p><code>&amp;(0x1 &lt;&lt; pos)</code></p>
+          <h3 id="设置位"><a href="#设置位" class="headerlink" title="设置位"></a>设置位</h3>
+          <p><code>|(0x1 &lt;&lt; pos)</code></p>
+          <h3 id="清除位"><a href="#清除位" class="headerlink" title="清除位"></a>清除位</h3>
+          <p><code>&amp;(~(0x1 &lt;&lt; pos))</code></p>
+          <h3 id="判断位相同"><a href="#判断位相同" class="headerlink" title="判断位相同"></a>判断位相同</h3>
+          <p><code>a&amp;(0x1&lt;&lt;pos) ^ b&amp;(0x1&lt;&lt;pos)</code></p>
+          <h3 id="获取最低的一位1"><a href="#获取最低的一位1" class="headerlink" title="获取最低的一位1"></a>获取最低的一位1</h3>
+          <p><code>n&amp;(-n)</code></p>
+          <h3 id="清除最低的一位1"><a href="#清除最低的一位1" class="headerlink" title="清除最低的一位1"></a>清除最低的一位1</h3>
+          <p><code>n = n&amp;(n-1)</code></p>
+          <h3 id="取负"><a href="#取负" class="headerlink" title="取负"></a>取负</h3>
+          <p><code>-n = ~(n-1) = ~n+1</code></p>
+          <h2 id="3-位运算的应用"><a href="#3-位运算的应用" class="headerlink" title="3. 位运算的应用"></a>3. 位运算的应用</h2>
+          <h3 id="不用额外变量，交换两个整数的值"><a href="#不用额外变量，交换两个整数的值" class="headerlink" title="不用额外变量，交换两个整数的值"></a>不用额外变量，交换两个整数的值</h3>
+          <p>常规方法：<br>
+            <figure class="highlight python">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">seap</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    a = a + b</span><br><span class="line">    b = a - b</span><br><span class="line">    a = a - b</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <p>使用位运算：<br>
+            <figure class="highlight python">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">swap</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    a = a^b</span><br><span class="line">    b = a^b</span><br><span class="line">    a = a^b</span><br><span class="line">    <span class="keyword">return</span> a, b</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <h3 id="取两数平均值"><a href="#取两数平均值" class="headerlink" title="取两数平均值"></a>取两数平均值</h3>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_avg</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (a&amp;b) + ((a^b)&gt;&gt;<span class="number">1</span>)</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>说明：a&amp;b 为两数相同部分，a^b 为两数不同部分。</p>
+          <h3 id="不用-号，计算两个整数之和"><a href="#不用-号，计算两个整数之和" class="headerlink" title="不用+-号，计算两个整数之和"></a>不用<code>+-</code>号，计算两个整数之和</h3>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_sum</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> b:</span><br><span class="line">        a, b = a^b + (a&amp;b)&lt;&lt;<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> a</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="求整型数的二进制表示中1的个数"><a href="#求整型数的二进制表示中1的个数" class="headerlink" title="求整型数的二进制表示中1的个数"></a>求整型数的二进制表示中1的个数</h3>
+          <p>方法1: 依次将最低位1抹去<br>
+            <figure class="highlight python">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">number_of_one</span><span class="params">(n)</span>:</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span>(n):</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        n = n&amp;(n<span class="number">-1</span>)</span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <p>方法2: 左移并逐次检查最低位<br>
+            <figure class="highlight python">
+              <table>
+                <tr>
+                  <td class="code">
+                    <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">number_of_one</span><span class="params">(n)</span>:</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span>(n):</span><br><span class="line">        count += n &amp; <span class="number">0x1</span></span><br><span class="line">        n &gt;&gt; <span class="number">1</span></span><br></pre>
+                  </td>
+                </tr>
+              </table>
+            </figure>
+          </p>
+          <h3 id="不用比较运算符，返回两个32位数中较大那个"><a href="#不用比较运算符，返回两个32位数中较大那个" class="headerlink" title="不用比较运算符，返回两个32位数中较大那个"></a>不用比较运算符，返回两个32位数中较大那个</h3>
+          <p>可根据 a-b 的符号决定。</p>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_max</span><span class="params">(self, a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> b <span class="keyword">if</span> <span class="number">1</span>&amp;((a-b)&gt;&gt;<span class="number">31</span>) <span class="keyword">else</span> a</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <p>问题：当 a-b 溢出时，可能产生问题</p>
+          <h3 id="找出数组中唯一出现奇数次的数"><a href="#找出数组中唯一出现奇数次的数" class="headerlink" title="找出数组中唯一出现奇数次的数"></a>找出数组中唯一出现奇数次的数</h3>
+          <p>思路：</p>
+          <ol>
+            <li>n 与 0 异或为 n</li>
+            <li>n 与 n 异或为 0</li>
+          </ol>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">find_odd</span><span class="params">(arr)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> reduce(<span class="keyword">lambda</span> x, y: x^y, arr)</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="找出数组中唯二出现奇数次的数"><a href="#找出数组中唯二出现奇数次的数" class="headerlink" title="找出数组中唯二出现奇数次的数"></a>找出数组中唯二出现奇数次的数</h3>
+          <p>经过上题的方法，将得出 a^b，由此可知如何区分a和b</p>
+          <figure class="highlight python">
+            <table>
+              <tr>
+                <td class="code">
+                  <pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">findOdds</span><span class="params">(self, arr, n)</span>:</span></span><br><span class="line">    result = reduce(<span class="keyword">lambda</span> x, y: x ^ y, arr, <span class="number">0</span>)</span><br><span class="line">    k = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> k &amp; result == <span class="number">0</span>:</span><br><span class="line">        k &lt;&lt;= <span class="number">1</span></span><br><span class="line">    newArr = filter(<span class="keyword">lambda</span> x: x &amp; k != <span class="number">0</span>, arr)</span><br><span class="line">    a = reduce(<span class="keyword">lambda</span> x, y: x ^ y, newArr, <span class="number">0</span>)</span><br><span class="line">    b = a ^ result</span><br><span class="line">    <span class="keyword">return</span> [min(a, b), max(a, b)]</span><br></pre>
+                </td>
+              </tr>
+            </table>
+          </figure>
+          <h3 id="只用逻辑运算符实现加法运算"><a href="#只用逻辑运算符实现加法运算" class="headerlink" title="只用逻辑运算符实现加法运算"></a>只用逻辑运算符实现加法运算</h3>
+          <h3 id="只用逻辑运算符实现乘法运算"><a href="#只用逻辑运算符实现乘法运算" class="headerlink" title="只用逻辑运算符实现乘法运算"></a>只用逻辑运算符实现乘法运算</h3>
+          <h3 id="只用逻辑运算符实现正整数除法运算"><a href="#只用逻辑运算符实现正整数除法运算" class="headerlink" title="只用逻辑运算符实现正整数除法运算"></a>只用逻辑运算符实现正整数除法运算</h3>
+          <h3 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h3>
+          <p><a href="https://www.nowcoder.com/study/vod/1/8/1" target="_blank" rel="noopener">布隆过滤器</a></p>
+          <p>应用场景：容忍一定程度的失误率，但对空间的要求比较严格</p>
+          <ul>
+            <li>网页黑名单过滤系统</li>
+            <li>垃圾邮件过滤系统</li>
+            <li>爬虫的网址判断重复系统</li>
+          </ul>
+          <hr>
+
+
+          <ul class="pager">
+
+            <li class="previous">
+              <a href="/2018/02/21/tcp-ip-overview/" data-toggle="tooltip" data-placement="top" title="TCP/IP 协议栈概述">&larr; Previous Post</a>
+            </li>
+
+
+            <li class="next">
+              <a href="/2018/02/11/vim-cheatsheet/" data-toggle="tooltip" data-placement="top" title="Vim Cheatsheet">Next Post &rarr;</a>
+            </li>
+
+          </ul>
+
+
+
+
+
+
+          <!--加入新的评论系统-->
+
+        </div>
+
+        <div class="hidden-xs col-sm-3 toc-col">
+          <div class="toc-wrap">
+            <ol class="toc">
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#1-位运算符"><span class="toc-text">1. 位运算符</span></a></li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#2-基本的位操作"><span class="toc-text">2. 基本的位操作</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#获取位"><span class="toc-text">获取位</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#设置位"><span class="toc-text">设置位</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#清除位"><span class="toc-text">清除位</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#判断位相同"><span class="toc-text">判断位相同</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#获取最低的一位1"><span class="toc-text">获取最低的一位1</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#清除最低的一位1"><span class="toc-text">清除最低的一位1</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#取负"><span class="toc-text">取负</span></a></li>
+                </ol>
+              </li>
+              <li class="toc-item toc-level-2"><a class="toc-link" href="#3-位运算的应用"><span class="toc-text">3. 位运算的应用</span></a>
+                <ol class="toc-child">
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#不用额外变量，交换两个整数的值"><span class="toc-text">不用额外变量，交换两个整数的值</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#取两数平均值"><span class="toc-text">取两数平均值</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#不用-号，计算两个整数之和"><span class="toc-text">不用+-号，计算两个整数之和</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#求整型数的二进制表示中1的个数"><span class="toc-text">求整型数的二进制表示中1的个数</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#不用比较运算符，返回两个32位数中较大那个"><span class="toc-text">不用比较运算符，返回两个32位数中较大那个</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#找出数组中唯一出现奇数次的数"><span class="toc-text">找出数组中唯一出现奇数次的数</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#找出数组中唯二出现奇数次的数"><span class="toc-text">找出数组中唯二出现奇数次的数</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#只用逻辑运算符实现加法运算"><span class="toc-text">只用逻辑运算符实现加法运算</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#只用逻辑运算符实现乘法运算"><span class="toc-text">只用逻辑运算符实现乘法运算</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#只用逻辑运算符实现正整数除法运算"><span class="toc-text">只用逻辑运算符实现正整数除法运算</span></a></li>
+                  <li class="toc-item toc-level-3"><a class="toc-link" href="#布隆过滤器"><span class="toc-text">布隆过滤器</span></a></li>
+                </ol>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Sidebar Container -->
+
+        <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+          <!-- Featured Tags -->
+
+          <section>
+            <!-- no hr -->
+            <h5 class="text-center">
+              <a href="/tags/">FEATURED TAGS</a>
+            </h5>
+            <div class="tags">
+
+              <a class="tag" href="/tags/#Algorithm" title="Algorithm">Algorithm</a>
+
+            </div>
+          </section>
+
+
+          <!-- Friends Blog -->
+
+        </div>
+      </div>
+
+    </div>
+  </article>
+  <!-- Footer -->
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+          <br>
+          <ul class="list-inline text-center">
+
+
+
+
+
+            <li>
+              <a target="_blank" href="http://weibo.com/1757057895">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://www.facebook.com/100005656009098">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+            <li>
+              <a target="_blank" href="https://github.com/wanghdnku">
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+
+
+
+
+          </ul>
+          <p class="copyright text-muted">
+            Copyright &copy; Hayden 2019
+            <br>
+            <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+            <br>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="../../../../js/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="../../../../js/bootstrap.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="../../../../js/blog.js"></script>
+
+  <!-- async load function -->
+  <script>
+    function async (u, c) {
+      var d = document,
+        t = 'script',
+        o = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) {
+        o.addEventListener('load', function(e) {
+          c(null, e);
+        }, false);
+      }
+      s.parentNode.insertBefore(o, s);
+    }
+  </script>
+
+  <!-- jquery.tagcloud.js -->
+  <script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+      async ("blog.hayden.fun/js/jquery.tagcloud.js", function() {
+        $.fn.tagcloud.defaults = {
+          //size: {start: 1, end: 1, unit: 'em'},
+          color: {
+            start: '#bbbbee',
+            end: '#0085a1'
+          },
+        };
+        $('#tag_cloud a').tagcloud();
+      })
+    }
+  </script>
+
+  <!--fastClick.js -->
+  <script>
+    async ("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function() {
+      var $nav = document.querySelector("nav");
+      if ($nav) FastClick.attach($nav);
+    })
+  </script>
+
+  <!-- Google Analytics -->
+
+
+
+  <!-- Baidu Tongji -->
+
+
+  <!-- swiftype -->
+  <script type="text/javascript">
+    (function(w, d, t, u, n, s, e) {
+      w['SwiftypeObject'] = n;
+      w[n] = w[n] || function() {
+        (w[n].q = w[n].q || []).push(arguments);
+      };
+      s = d.createElement(t);
+      e = d.getElementsByTagName(t)[0];
+      s.async = 1;
+      s.src = u;
+      e.parentNode.insertBefore(s, e);
+    })(window, document, 'script', '//s.swiftypecdn.com/install/v2/st.js', '_st');
+
+    _st('install', '', '2.0.0');
+  </script>
+
+  <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  <!--wechat title img-->
+  <img class="wechat-title-img" src="http://ww1.sinaimg.cn/mw690/68ba9367ly1fo8dsy3y18j21cj1cj1kx.jpg"><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<!-- End: Injected MathJax --><!-- hexo-inject:end -->
+</body>
+
+</html>
